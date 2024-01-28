@@ -17,6 +17,10 @@ public class APIServer
 
         listener = new HttpListener();
         listener.Prefixes.Add($"http://localhost:{port}/");
+
+        if (!string.IsNullOrEmpty(Program.Config.Host))
+            listener.Prefixes.Add(Program.Config.Host);
+
         listener.Start();
 
         var thread = new Thread(startListener);
