@@ -34,5 +34,5 @@ public class User
     /// </summary>
     [BsonElement("color")]
     [JsonProperty("color")]
-    public string Color { get; set; } = "#ffffff";
+    public string Color { get; set; } = "";
 }
