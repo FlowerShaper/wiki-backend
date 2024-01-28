@@ -35,4 +35,11 @@ public class User
     [BsonElement("color")]
     [JsonProperty("color")]
     public string Color { get; set; } = "";
+
+    /// <summary>
+    /// Join date of the user.
+    /// </summary>
+    [BsonElement("join")]
+    [JsonProperty("join")]
+    public long JoinDate { get; set; } = 0;
 }

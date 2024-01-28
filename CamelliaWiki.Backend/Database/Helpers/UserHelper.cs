@@ -23,12 +23,15 @@ public static class UserHelper
             return cached;
         }
 
+        var hasJoinDate = cached != null && cached.JoinDate != 0;
+
         var u = new User
         {
             ID = user.Id,
             Username = user.Username,
             AvatarUrl = user.AvatarUrl,
-            Color = user.Color.ToString()
+            Color = user.Color.ToString(),
+            JoinDate = hasJoinDate ? cached!.JoinDate : DateTimeOffset.UtcNow.ToUnixTimeSeconds()
         };
 
         if (cached == null)
