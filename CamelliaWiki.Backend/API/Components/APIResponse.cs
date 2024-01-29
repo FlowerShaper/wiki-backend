@@ -1,25 +1,24 @@
-﻿using System.Net;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.API.Components;
 
 public class APIResponse
 {
     /// <summary>
-    /// The HTTP status code of the response.
+    /// The status code of the response. 0 means success.
     /// </summary>
-    [JsonProperty("status")]
-    public HttpStatusCode Status { get; init; } = HttpStatusCode.OK;
+    [JsonIgnore]
+    public ErrorCodes Code { get; init; } = ErrorCodes.None;
 
     /// <summary>
-    /// The message of the response.
+    /// The status code in integer form.
     /// </summary>
-    [JsonProperty("message")]
-    public string Message { get; init; } = "OK";
+    [JsonProperty("code")]
+    public int ErrorCode => (int)Code;
 
     /// <summary>
     /// The data of the response.
     /// </summary>
     [JsonProperty("data")]
-    public object Data { get; init; } = new();
+    public object? Data { get; init; }
 }

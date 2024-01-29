@@ -17,40 +17,16 @@ public class PostCommentRoute : IAPIRoute
         var content = new StreamReader(context.Request.InputStream).ReadToEnd();
 
         if (string.IsNullOrEmpty(auth))
-        {
-            return new APIResponse
-            {
-                Status = HttpStatusCode.Unauthorized,
-                Message = "Missing authorization header!"
-            };
-        }
+            return new APIResponse { Code = ErrorCodes.NoAuthorizationHeader };
 
         if (string.IsNullOrEmpty(slug))
-        {
-            return new APIResponse
-            {
-                Status = HttpStatusCode.BadRequest,
-                Message = "Missing slug!"
-            };
-        }
+            return new APIResponse { Code = ErrorCodes.MissingSlug };
 
         if (string.IsNullOrEmpty(content))
-        {
-            return new APIResponse
-            {
-                Status = HttpStatusCode.BadRequest,
-                Message = "Missing content!"
-            };
-        }
+            return new APIResponse { Code = ErrorCodes.MissingContent };
 
         if (!TokenCache.TryGet(auth, out var id))
-        {
-            return new APIResponse
-            {
-                Status = HttpStatusCode.Unauthorized,
-                Message = "Invalid token!"
-            };
-        }
+            return new APIResponse { Code = ErrorCodes.InvalidToken };
 
         var comment = CommentHelper.CreateComment(slug, id, content);
         return new APIResponse { Data = comment };

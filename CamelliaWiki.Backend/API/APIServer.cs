@@ -121,11 +121,7 @@ public class APIServer
 
         if (route == null)
         {
-            response = new APIResponse
-            {
-                Status = HttpStatusCode.NotFound,
-                Message = "The requested route does not exist."
-            };
+            response = new APIResponse { Code = ErrorCodes.NotFound };
         }
         else
         {
@@ -135,13 +131,7 @@ public class APIServer
             }
             catch (Exception e)
             {
-                response = new APIResponse
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Message = "Welp, something went very wrong. It's probably not your fault, but please report this to the developers.",
-                    Data = new { }
-                };
-
+                response = new APIResponse { Code = ErrorCodes.InternalError };
                 Console.WriteLine(e);
             }
         }
@@ -151,7 +141,11 @@ public class APIServer
 
     private void sendResponse(HttpListenerResponse res, object obj)
     {
-        var buffer = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj));
+        var buffer = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj, Formatting.None, new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        }));
+
         res.ContentLength64 = buffer.Length;
         res.ContentEncoding = Encoding.UTF8;
         res.AddHeader("Content-Type", "application/json");

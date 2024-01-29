@@ -15,33 +15,15 @@ public class GetAccountRoute : IAPIRoute
         var auth = context.Request.Headers["Authorization"];
 
         if (string.IsNullOrEmpty(auth))
-        {
-            return new APIResponse
-            {
-                Status = HttpStatusCode.Unauthorized,
-                Message = "Missing authorization header!"
-            };
-        }
+            return new APIResponse { Code = ErrorCodes.NoAuthorizationHeader };
 
         if (!TokenCache.TryGet(auth, out var id))
-        {
-            return new APIResponse
-            {
-                Status = HttpStatusCode.Unauthorized,
-                Message = "Invalid token!"
-            };
-        }
+            return new APIResponse { Code = ErrorCodes.InvalidToken };
 
         var user = UserHelper.Get(id, false);
 
         if (user == null)
-        {
-            return new APIResponse
-            {
-                Status = HttpStatusCode.NotFound,
-                Message = "User not found!"
-            };
-        }
+            return new APIResponse { Code = ErrorCodes.UserNotFound };
 
         return new APIResponse { Data = user };
     }
