@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using CamelliaWiki.Backend.Database.Helpers;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.Components.Users;
@@ -42,4 +43,11 @@ public class User
     [BsonElement("join")]
     [JsonProperty("join")]
     public long JoinDate { get; set; } = 0;
+
+    /// <summary>
+    /// Amount of comments the user has made.
+    /// </summary>
+    [BsonIgnore]
+    [JsonProperty("comments")]
+    public int CommentCount => CommentHelper.FromUser(ID).Count;
 }

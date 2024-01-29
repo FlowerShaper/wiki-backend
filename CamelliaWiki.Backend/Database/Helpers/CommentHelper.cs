@@ -22,4 +22,6 @@ public static class CommentHelper
         comments.InsertOne(comment);
         return comment;
     }
+
+    public static List<Comment> FromUser(ulong id) => comments.Find(c => c.AuthorID == id).ToList();
 }
