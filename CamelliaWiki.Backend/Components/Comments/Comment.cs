@@ -1,4 +1,6 @@
-﻿using MongoDB.Bson;
+﻿using CamelliaWiki.Backend.Components.Users;
+using CamelliaWiki.Backend.Database.Helpers;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
@@ -8,40 +10,47 @@ public class Comment
 {
     [BsonId]
     [JsonProperty("id")]
-    public ObjectId ID { get; set; } = ObjectId.GenerateNewId();
+    public ObjectId ID { get; init; } = ObjectId.GenerateNewId();
 
     /// <summary>
     /// Discord ID of the author of this comment.
     /// </summary>
     [BsonElement("author")]
+    [JsonIgnore]
+    public ulong AuthorID { get; init; }
+
+    /// <summary>
+    /// The author of this comment.
+    /// </summary>
+    [BsonIgnore]
     [JsonProperty("author")]
-    public ulong AuthorID { get; set; } = 0;
+    public User Author => UserHelper.Get(AuthorID)!;
 
     /// <summary>
     /// The content of this comment.
     /// </summary>
     [BsonElement("content")]
     [JsonProperty("content")]
-    public string Content { get; set; } = "";
+    public string Content { get; init; } = "";
 
     /// <summary>
     /// The slug of the post this comment is on.
     /// </summary>
     [BsonElement("slug")]
     [JsonProperty("slug")]
-    public string PostSlug { get; set; } = "";
+    public string PostSlug { get; init; } = "";
 
     /// <summary>
     /// The timestamp of this comment.
     /// </summary>
     [BsonElement("time")]
     [JsonProperty("time")]
-    public long Timestamp { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    public long Timestamp { get; init; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
     /// <summary>
     /// The ID of the parent comment. Used for replies. Null if this is a top-level comment.
     /// </summary>
     [BsonElement("parent")]
     [JsonProperty("parent")]
-    public ObjectId? ParentID { get; set; }
+    public ObjectId? ParentID { get; init; }
 }
