@@ -13,6 +13,7 @@ public class GetPostCommentsRoute : IAPIRoute
     {
         var slug = parameters["slug"];
         var comments = CommentHelper.GetPostComments(slug);
+
         return new APIResponse { Data = comments };
     }
 }
