@@ -37,6 +37,13 @@ public class User
     [JsonProperty("color")]
     public string Color { get; set; } = "";
 
+	/// <summary>
+	/// If the user is a staff member.
+	/// </summary>
+	[BsonElement("staff")]
+    [JsonProperty("staff")]
+    public bool IsStaff { get; set; } = false;
+
     /// <summary>
     /// Join date of the user.
     /// </summary>

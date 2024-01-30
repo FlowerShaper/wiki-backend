@@ -1,6 +1,7 @@
 ﻿using CamelliaWiki.Backend.Bot;
 using CamelliaWiki.Backend.Components.Users;
 using MongoDB.Driver;
+using DSharpPlus;
 
 namespace CamelliaWiki.Backend.Database.Helpers;
 
@@ -31,7 +32,8 @@ public static class UserHelper
             Username = user.Username,
             AvatarUrl = user.AvatarUrl,
             Color = user.Color.ToString(),
-            JoinDate = hasJoinDate ? cached!.JoinDate : DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+            JoinDate = hasJoinDate ? cached!.JoinDate : DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+			IsStaff = user.Permissions.HasPermission(Permissions.ModerateMembers)
         };
 
         if (cached == null)
