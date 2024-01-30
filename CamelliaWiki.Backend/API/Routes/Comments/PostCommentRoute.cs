@@ -22,7 +22,7 @@ public class PostCommentRoute : IAPIRoute
         if (string.IsNullOrEmpty(slug))
             return new APIResponse { Code = ErrorCodes.MissingSlug };
 
-        if (string.IsNullOrEmpty(content))
+        if (string.IsNullOrEmpty(content) || string.IsNullOrWhiteSpace(content))
             return new APIResponse { Code = ErrorCodes.MissingContent };
 
         if (!TokenCache.TryGet(auth, out var id))
