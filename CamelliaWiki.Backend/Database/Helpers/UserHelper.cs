@@ -43,4 +43,10 @@ public static class UserHelper
 
         return u;
     }
+
+    public static bool IsStaff(ulong uid)
+    {
+        var user = Get(uid);
+        return user is { IsStaff: true };
+    }
 }

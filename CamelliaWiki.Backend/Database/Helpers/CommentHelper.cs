@@ -25,6 +25,8 @@ public static class CommentHelper
     }
 
     public static void Update(Comment comment) => comments.ReplaceOne(c => c.ID == comment.ID, comment);
+    public static void Delete(Comment comment) => comments.DeleteOne(c => c.ID == comment.ID);
+
     public static List<Comment> FromUser(ulong id) => comments.Find(c => c.AuthorID == id).ToList();
 
     public static bool TryGetComment(string id, out Comment o)
