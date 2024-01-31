@@ -31,7 +31,7 @@ public class Comment
     /// </summary>
     [BsonElement("content")]
     [JsonProperty("content")]
-    public string Content { get; init; } = "";
+    public string Content { get; set; } = "";
 
     /// <summary>
     /// The slug of the post this comment is on.
@@ -46,6 +46,13 @@ public class Comment
     [BsonElement("time")]
     [JsonProperty("time")]
     public long Timestamp { get; init; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+    /// <summary>
+    /// The last time this comment was edited.
+    /// </summary>
+    [BsonElement("edited")]
+    [JsonProperty("edited")]
+    public long LastEdited { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
     /// <summary>
     /// The ID of the parent comment. Used for replies. Null if this is a top-level comment.

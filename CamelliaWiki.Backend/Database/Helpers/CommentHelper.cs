@@ -1,4 +1,5 @@
 ﻿using CamelliaWiki.Backend.Components.Comments;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace CamelliaWiki.Backend.Database.Helpers;
@@ -23,5 +24,14 @@ public static class CommentHelper
         return comment;
     }
 
+    public static void Update(Comment comment) => comments.ReplaceOne(c => c.ID == comment.ID, comment);
     public static List<Comment> FromUser(ulong id) => comments.Find(c => c.AuthorID == id).ToList();
+
+    public static bool TryGetComment(string id, out Comment o)
+    {
+        var objId = new ObjectId(id);
+
+        o = comments.Find(c => c.ID == objId).FirstOrDefault();
+        return o != null;
+    }
 }

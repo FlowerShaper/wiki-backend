@@ -8,6 +8,8 @@ public enum ErrorCodes
     NoAuthorizationHeader = 115,
     InvalidToken = 168,
     MissingSlug = 175,
+    NoPermission = 182,
     MissingContent = 185,
-    NotFound = 192
+    NotFound = 192,
+    CommentNotFound = 198
 }
