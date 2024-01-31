@@ -24,6 +24,21 @@ public static class CommentHelper
         return comment;
     }
 
+    public static Comment CreateReply(this Comment parent, ulong uid, string content)
+    {
+        var comment = new Comment
+        {
+            PostSlug = parent.PostSlug,
+            AuthorID = uid,
+            Content = content,
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            ParentID = parent.ID
+        };
+
+        comments.InsertOne(comment);
+        return comment;
+    }
+
     public static void Update(Comment comment) => comments.ReplaceOne(c => c.ID == comment.ID, comment);
     public static void Delete(Comment comment) => comments.DeleteOne(c => c.ID == comment.ID);
 
