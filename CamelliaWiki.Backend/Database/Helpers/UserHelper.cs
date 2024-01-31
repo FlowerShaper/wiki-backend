@@ -33,7 +33,7 @@ public static class UserHelper
             AvatarUrl = user.AvatarUrl,
             Color = user.Color.ToString(),
             JoinDate = hasJoinDate ? cached!.JoinDate : DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-			IsStaff = user.Permissions.HasPermission(Permissions.ModerateMembers)
+            IsStaff = user.Permissions.HasPermission(Permissions.ModerateMembers)
         };
 
         if (cached == null)
