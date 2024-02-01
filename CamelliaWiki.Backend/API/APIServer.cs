@@ -150,7 +150,7 @@ public class APIServer
         res.ContentEncoding = Encoding.UTF8;
         res.AddHeader("Content-Type", "application/json");
         res.AddHeader("Access-Control-Allow-Origin", "*");
-        res.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         res.AddHeader("Access-Control-Allow-Headers", "*");
         res.OutputStream.Write(buffer);
         res.OutputStream.Close();
