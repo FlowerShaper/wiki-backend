@@ -26,7 +26,7 @@ public class APIServer
         var thread = new Thread(startListener);
         thread.Start();
 
-        Console.WriteLine($"Started API server on port {port}.");
+        Logger.Log($"Started API server on port {port}.");
     }
 
     private void loadRoutes()
@@ -41,7 +41,7 @@ public class APIServer
                 });
 
         routeList.Sort((a, b) => string.Compare(a.Path, b.Path, StringComparison.Ordinal));
-        routeList.ForEach(r => Console.WriteLine($"Loaded API route {r.Method.Method} {r.Path}"));
+        routeList.ForEach(r => Logger.Log($"Loaded API route {r.Method.Method} {r.Path}"));
     }
 
     private void startListener(object? o)
@@ -132,7 +132,7 @@ public class APIServer
             catch (Exception e)
             {
                 response = new APIResponse { Code = ErrorCodes.InternalError };
-                Console.WriteLine(e);
+                Logger.Log(e);
             }
         }
 

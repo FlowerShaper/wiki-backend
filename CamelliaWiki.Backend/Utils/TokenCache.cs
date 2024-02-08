@@ -40,7 +40,7 @@ public static class TokenCache
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Logger.Log(e);
             return false;
         }
     }

@@ -19,9 +19,9 @@ public static class UserHelper
         {
             user = DiscordBot.GetUser(id);
         }
-        catch (Exception e)
+        catch
         {
-            Console.WriteLine($"Failed to get user {id}");
+            Logger.Log($"Failed to get user {id}");
 
             if (!allowFallback)
                 return null;
