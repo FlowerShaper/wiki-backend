@@ -2,6 +2,7 @@
 using CamelliaWiki.Backend.Components.Users;
 using MongoDB.Driver;
 using DSharpPlus;
+using DSharpPlus.Entities;
 
 namespace CamelliaWiki.Backend.Database.Helpers;
 
@@ -11,8 +12,22 @@ public static class UserHelper
 
     public static User? Get(ulong id, bool allowFallback = true)
     {
-        var user = DiscordBot.GetUser(id);
+        DiscordMember? user;
         var cached = users.Find(u => u.ID == id).FirstOrDefault();
+
+        try
+        {
+            user = DiscordBot.GetUser(id);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed to get user {id}");
+
+            if (!allowFallback)
+                return null;
+
+            return cached;
+        }
 
 #pragma warning disable CS8604 // Possible null reference argument.
         if (user == null)
