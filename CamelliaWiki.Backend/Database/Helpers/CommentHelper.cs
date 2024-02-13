@@ -11,7 +11,7 @@ public static class CommentHelper
     public static IEnumerable<Comment> GetPostComments(string slug, ulong uid)
     {
         var list = comments.Find(c => c.PostSlug == slug).ToList();
-        list.ForEach(c => c.PopulateVotes(uid));
+        list.ForEach(c => c.Populate(uid));
         return list;
     }
 
@@ -55,5 +55,12 @@ public static class CommentHelper
 
         o = comments.Find(c => c.ID == objId).FirstOrDefault();
         return o != null;
+    }
+
+    public static IEnumerable<Comment> GetReplies(ObjectId id, ulong uid)
+    {
+        var list = comments.Find(c => c.ParentID == id).ToList();
+        list.ForEach(c => c.Populate(uid));
+        return list;
     }
 }

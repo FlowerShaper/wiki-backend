@@ -89,14 +89,23 @@ public class Comment
     [JsonProperty("parent")]
     public ObjectId? ParentID { get; init; }
 
+    /// <summary>
+    /// The replies to this comment.
+    /// </summary>
+    [BsonIgnore]
+    [JsonProperty("replies")]
+    public List<Comment> Replies { get; set; } = new();
+
     public void SetVote(ulong uid, int voteValue)
     {
         if (!Votes.TryAdd(uid, voteValue))
             Votes[uid] = voteValue;
     }
 
-    public void PopulateVotes(ulong uid)
+    public void Populate(ulong uid)
     {
+        Replies = CommentHelper.GetReplies(ID, uid).ToList();
+
         if (uid == 0)
             return;
 
