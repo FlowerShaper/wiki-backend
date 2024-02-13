@@ -8,7 +8,12 @@ public static class CommentHelper
 {
     private static IMongoCollection<Comment> comments => MongoDatabase.GetCollection<Comment>("comments");
 
-    public static IEnumerable<Comment> GetPostComments(string slug) => comments.Find(c => c.PostSlug == slug).ToEnumerable();
+    public static IEnumerable<Comment> GetPostComments(string slug, ulong uid)
+    {
+        var list = comments.Find(c => c.PostSlug == slug).ToList();
+        list.ForEach(c => c.PopulateVotes(uid));
+        return list;
+    }
 
     public static Comment CreateComment(string slug, ulong id, string content)
     {

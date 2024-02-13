@@ -52,7 +52,35 @@ public class Comment
     /// </summary>
     [BsonElement("edited")]
     [JsonProperty("edited")]
-    public long LastEdited { get; set; } = 0;
+    public long LastEdited { get; set; }
+
+    /// <summary>
+    /// The votes on this comment.
+    /// </summary>
+    [JsonIgnore]
+    [BsonElement("votes")]
+    public Dictionary<ulong, long> Votes { get; set; } = new();
+
+    /// <summary>
+    /// The number of upvotes this comment has.
+    /// </summary>
+    [BsonIgnore]
+    [JsonProperty("ups")]
+    public long UpVotes => Votes.Count(x => x.Value == 1);
+
+    /// <summary>
+    /// The number of downvotes this comment has.
+    /// </summary>
+    [BsonIgnore]
+    [JsonProperty("downs")]
+    public long DownVotes => Votes.Count(x => x.Value == -1);
+
+    /// <summary>
+    /// The vote of the current user. 0 for no vote, 1 for upvote, -1 for downvote.
+    /// </summary>
+    [BsonIgnore]
+    [JsonProperty("vote")]
+    public long YourVote { get; set; }
 
     /// <summary>
     /// The ID of the parent comment. Used for replies. Null if this is a top-level comment.
@@ -60,4 +88,18 @@ public class Comment
     [BsonElement("parent")]
     [JsonProperty("parent")]
     public ObjectId? ParentID { get; init; }
+
+    public void SetVote(ulong uid, int voteValue)
+    {
+        if (!Votes.TryAdd(uid, voteValue))
+            Votes[uid] = voteValue;
+    }
+
+    public void PopulateVotes(ulong uid)
+    {
+        if (uid == 0)
+            return;
+
+        YourVote = Votes.GetValueOrDefault(uid, 0);
+    }
 }

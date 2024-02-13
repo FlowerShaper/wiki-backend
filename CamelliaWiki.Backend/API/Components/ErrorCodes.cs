@@ -10,6 +10,7 @@ public enum ErrorCodes
     MissingSlug = 175,
     NoPermission = 182,
     MissingContent = 185,
+    InvalidParameter = 189,
     NotFound = 192,
     CommentNotFound = 198
 }
