@@ -59,7 +59,7 @@ public class Comment
     /// </summary>
     [JsonIgnore]
     [BsonElement("votes")]
-    public Dictionary<ulong, long> Votes { get; set; } = new();
+    public Dictionary<string, long> Votes { get; set; } = new();
 
     /// <summary>
     /// The number of upvotes this comment has.
@@ -98,8 +98,8 @@ public class Comment
 
     public void SetVote(ulong uid, int voteValue)
     {
-        if (!Votes.TryAdd(uid, voteValue))
-            Votes[uid] = voteValue;
+        if (!Votes.TryAdd(uid.ToString(), voteValue))
+            Votes[uid.ToString()] = voteValue;
     }
 
     public void Populate(ulong uid)
@@ -109,6 +109,6 @@ public class Comment
         if (uid == 0)
             return;
 
-        YourVote = Votes.GetValueOrDefault(uid, 0);
+        YourVote = Votes.GetValueOrDefault(uid.ToString(), 0);
     }
 }
