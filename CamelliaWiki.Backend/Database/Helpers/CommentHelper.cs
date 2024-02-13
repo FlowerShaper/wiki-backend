@@ -26,6 +26,9 @@ public static class CommentHelper
         };
 
         comments.InsertOne(comment);
+        
+        comment.SetVote(id, 1);
+        Update(comment);
         return comment;
     }
 
@@ -41,6 +44,9 @@ public static class CommentHelper
         };
 
         comments.InsertOne(comment);
+        
+        comment.SetVote(uid, 1);
+        Update(comment);
         return comment;
     }
 
