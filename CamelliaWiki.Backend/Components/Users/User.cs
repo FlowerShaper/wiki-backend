@@ -24,6 +24,13 @@ public class User
     public string Username { get; set; } = "";
 
     /// <summary>
+    /// The user's nickname.
+    /// </summary>
+    [BsonIgnore]
+    [JsonProperty("nick")]
+    public string Nickname { get; set; } = "";
+
+    /// <summary>
     /// The url of the user's avatar.
     /// </summary>
     [BsonElement("avatar")]

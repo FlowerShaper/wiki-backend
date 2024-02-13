@@ -48,6 +48,7 @@ public static class UserHelper
         {
             ID = user.Id,
             Username = user.Username,
+            Nickname = user.Nickname ?? "",
             AvatarUrl = user.AvatarUrl,
             Color = user.Color.ToString(),
             JoinDate = hasJoinDate ? cached!.JoinDate : DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
