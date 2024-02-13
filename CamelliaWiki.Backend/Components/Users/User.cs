@@ -33,14 +33,14 @@ public class User
     /// <summary>
     /// The user's role color.
     /// </summary>
-    [BsonElement("color")]
+    [BsonIgnore]
     [JsonProperty("color")]
     public string Color { get; set; } = "";
 
     /// <summary>
     /// If the user is a staff member.
     /// </summary>
-    [BsonElement("staff")]
+    [BsonIgnore]
     [JsonProperty("staff")]
     public bool IsStaff { get; set; } = false;
 
