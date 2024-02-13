@@ -12,6 +12,9 @@ public static class UserHelper
 
     public static User? Get(ulong id, bool allowFallback = true)
     {
+        if (id == 0)
+            return null;
+
         DiscordMember? user;
         var cached = users.Find(u => u.ID == id).FirstOrDefault();
 
