@@ -17,7 +17,7 @@ public class Comment
     /// </summary>
     [BsonElement("author")]
     [JsonIgnore]
-    public ulong AuthorID { get; init; }
+    public ulong AuthorID { get; set; }
 
     /// <summary>
     /// The author of this comment.

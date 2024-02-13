@@ -45,7 +45,13 @@ public static class CommentHelper
     }
 
     public static void Update(Comment comment) => comments.ReplaceOne(c => c.ID == comment.ID, comment);
-    public static void Delete(Comment comment) => comments.DeleteOne(c => c.ID == comment.ID);
+
+    public static void Delete(Comment comment)
+    {
+        comment.AuthorID = 0;
+        comment.Content = "";
+        Update(comment);
+    }
 
     public static List<Comment> FromUser(ulong id) => comments.Find(c => c.AuthorID == id).ToList();
 
