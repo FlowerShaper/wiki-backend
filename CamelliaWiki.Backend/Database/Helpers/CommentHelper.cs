@@ -1,4 +1,5 @@
 ﻿using CamelliaWiki.Backend.Components.Comments;
+using CamelliaWiki.Backend.Utils;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -21,7 +22,7 @@ public static class CommentHelper
         {
             PostSlug = slug,
             AuthorID = id,
-            Content = content,
+            Content = content.Sanitize(),
             Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
         };
 
@@ -38,7 +39,7 @@ public static class CommentHelper
         {
             PostSlug = parent.PostSlug,
             AuthorID = uid,
-            Content = content,
+            Content = content.Sanitize(),
             Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             ParentID = parent.ID
         };
