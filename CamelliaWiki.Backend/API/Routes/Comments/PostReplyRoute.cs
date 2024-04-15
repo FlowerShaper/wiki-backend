@@ -1,7 +1,5 @@
-﻿using System.Net;
-using CamelliaWiki.Backend.API.Components;
+﻿using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Database.Helpers;
-using CamelliaWiki.Backend.Utils;
 
 namespace CamelliaWiki.Backend.API.Routes.Comments;
 
@@ -9,26 +7,28 @@ public class PostReplyRoute : IAPIRoute
 {
     public string Path => "/comments/:id/reply";
     public HttpMethod Method => HttpMethod.Post;
+    public bool RequiresAuthentication => true;
 
-    public APIResponse Handle(HttpListenerContext context, RequestParameters parameters)
+    public async void Handle(APIInteraction interaction)
     {
-        var auth = context.Request.Headers["Authorization"];
-        var id = parameters["id"];
-        var content = new StreamReader(context.Request.InputStream).ReadToEnd();
+        if (!interaction.TryGetStringParameter("id", out var id))
+            return;
 
-        if (string.IsNullOrEmpty(auth))
-            return new APIResponse { Code = ErrorCodes.NoAuthorizationHeader };
+        var content = await new StreamReader(interaction.Request.InputStream).ReadToEndAsync();
 
         if (string.IsNullOrEmpty(content) || string.IsNullOrWhiteSpace(content))
-            return new APIResponse { Code = ErrorCodes.MissingContent };
-
-        if (!TokenCache.TryGet(auth, out var uid))
-            return new APIResponse { Code = ErrorCodes.InvalidToken };
+        {
+            await interaction.ReplyError(ErrorCodes.MissingContent);
+            return;
+        }
 
         if (!CommentHelper.TryGetComment(id, out var comment))
-            return new APIResponse { Code = ErrorCodes.CommentNotFound };
+        {
+            await interaction.ReplyError(ErrorCodes.CommentNotFound);
+            return;
+        }
 
-        var reply = comment.CreateReply(uid, content);
-        return new APIResponse { Data = reply };
+        var reply = comment.CreateReply(interaction.UserID, content);
+        await interaction.Reply(reply);
     }
 }

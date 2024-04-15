@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System.Reflection;
-using System.Text;
 using CamelliaWiki.Backend.API.Components;
-using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.API;
 
@@ -58,7 +56,7 @@ public class APIServer
         res?.AsyncWaitHandle.WaitOne();
     }
 
-    private void handle(IAsyncResult result)
+    private async void handle(IAsyncResult result)
     {
         var context = listener?.EndGetContext(result);
         if (context == null) return;
@@ -117,42 +115,30 @@ public class APIServer
             parameters = reqParams;
         }
 
-        APIResponse? response;
+        var interaction = new APIInteraction(req, res, parameters);
 
         if (route == null)
         {
-            response = new APIResponse { Code = ErrorCodes.NotFound };
-        }
-        else
-        {
-            try
-            {
-                response = route.Handle(context, parameters);
-            }
-            catch (Exception e)
-            {
-                response = new APIResponse { Code = ErrorCodes.InternalError };
-                Logger.Log(e);
-            }
+            await interaction.ReplyError(ErrorCodes.NotFound);
+            return;
         }
 
-        sendResponse(res, response);
-    }
-
-    private void sendResponse(HttpListenerResponse res, object obj)
-    {
-        var buffer = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj, Formatting.None, new JsonSerializerSettings
+        try
         {
-            NullValueHandling = NullValueHandling.Ignore
-        }));
+            if (route.RequiresAuthentication && !interaction.IsAuthorized)
+            {
+                await interaction.ReplyError(interaction.AuthError);
+                return;
+            }
 
-        res.ContentLength64 = buffer.Length;
-        res.ContentEncoding = Encoding.UTF8;
-        res.AddHeader("Content-Type", "application/json");
-        res.AddHeader("Access-Control-Allow-Origin", "*");
-        res.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-        res.AddHeader("Access-Control-Allow-Headers", "*");
-        res.OutputStream.Write(buffer);
-        res.OutputStream.Close();
+            // interaction.StartTimer();
+
+            route.Handle(interaction);
+        }
+        catch (Exception e)
+        {
+            await interaction.ReplyError(ErrorCodes.InternalError);
+            Logger.Log(e);
+        }
     }
 }

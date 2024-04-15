@@ -1,7 +1,5 @@
-﻿using System.Net;
-using CamelliaWiki.Backend.API.Components;
+﻿using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Database.Helpers;
-using CamelliaWiki.Backend.Utils;
 
 namespace CamelliaWiki.Backend.API.Routes.Comments;
 
@@ -9,30 +7,31 @@ public class PostCommentVoteRoute : IAPIRoute
 {
     public string Path => "/comments/:id/vote";
     public HttpMethod Method => HttpMethod.Post;
+    public bool RequiresAuthentication => true;
 
-    public APIResponse Handle(HttpListenerContext context, RequestParameters parameters)
+    public async void Handle(APIInteraction interaction)
     {
-        var auth = context.Request.Headers["Authorization"];
-        var id = parameters["id"];
-
-        if (string.IsNullOrEmpty(auth))
-            return new APIResponse { Code = ErrorCodes.NoAuthorizationHeader };
-
-        if (!TokenCache.TryGet(auth, out var uid))
-            return new APIResponse { Code = ErrorCodes.InvalidToken };
+        if (!interaction.TryGetStringParameter("id", out var id))
+            return;
 
         if (!CommentHelper.TryGetComment(id, out var comment))
-            return new APIResponse { Code = ErrorCodes.CommentNotFound };
+        {
+            await interaction.ReplyError(ErrorCodes.CommentNotFound);
+            return;
+        }
 
-        var vote = new StreamReader(context.Request.InputStream).ReadToEnd();
+        var vote = await new StreamReader(interaction.Request.InputStream).ReadToEndAsync();
 
         if (!int.TryParse(vote, out var voteValue))
-            return new APIResponse { Code = ErrorCodes.InvalidParameter };
+        {
+            await interaction.ReplyError(ErrorCodes.InvalidParameter);
+            return;
+        }
 
         voteValue = Math.Clamp(voteValue, -1, 1);
-        comment.SetVote(uid, voteValue);
+        comment.SetVote(interaction.UserID, voteValue);
 
         CommentHelper.Update(comment);
-        return new APIResponse();
+        await interaction.Reply();
     }
 }

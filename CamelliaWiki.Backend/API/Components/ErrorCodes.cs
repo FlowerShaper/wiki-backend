@@ -12,5 +12,9 @@ public enum ErrorCodes
     MissingContent = 185,
     InvalidParameter = 189,
     NotFound = 192,
-    CommentNotFound = 198
+    CommentNotFound = 198,
+    MissingHeader = 201,
+    MissingParameter = 204,
+    MissingQuery = 210,
+    InvalidQuery = 213,
 }

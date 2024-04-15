@@ -1,5 +1,4 @@
-﻿using System.Net;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace CamelliaWiki.Backend.API.Components;
 
@@ -16,5 +15,10 @@ public interface IAPIRoute
     /// </summary>
     public HttpMethod Method { get; }
 
-    public APIResponse Handle(HttpListenerContext context, RequestParameters parameters);
+    /// <summary>
+    /// Whether the route requires authentication.
+    /// </summary>
+    public bool RequiresAuthentication { get; }
+
+    public void Handle(APIInteraction interaction);
 }
