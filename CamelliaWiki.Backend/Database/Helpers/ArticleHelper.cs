@@ -8,6 +8,8 @@ public static class ArticleHelper
 {
     private static IMongoCollection<Article> collection => MongoDatabase.GetCollection<Article>("articles");
 
+    public static List<Article> All => collection.Find(_ => true).ToList();
+
     public static void AddArticle(Article article) => collection.InsertOne(article);
 
     public static Article? GetArticle(string path, Language lang)
@@ -22,5 +24,5 @@ public static class ArticleHelper
         return article;
     }
 
-    public static void Wipe() => collection.DeleteMany(FilterDefinition<Article>.Empty);
+    public static void Wipe() => collection.DeleteMany(_ => true);
 }

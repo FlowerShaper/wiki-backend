@@ -10,6 +10,10 @@ public class Article
     public string ID { get; init; } = "";
 
     [BsonIgnore]
+    [JsonProperty("path")]
+    public string Path => ID.Split(':')[0];
+
+    [BsonIgnore]
     [JsonProperty("lang")]
     public string Language => ID.Split(':')[1];
 

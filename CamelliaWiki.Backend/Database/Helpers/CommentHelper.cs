@@ -9,6 +9,8 @@ public static class CommentHelper
 {
     private static IMongoCollection<Comment> comments => MongoDatabase.GetCollection<Comment>("comments");
 
+    public static List<Comment> All => comments.Find(_ => true).ToList();
+
     public static IEnumerable<Comment> GetPostComments(string slug, ulong uid)
     {
         var list = comments.Find(c => c.PostSlug == slug).ToList();
