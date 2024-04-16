@@ -50,7 +50,7 @@ public class MarkdownProcessor
 
         var name = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
 
-        if (!LanguageUtils.TryParse(name, out _))
+        if (!LanguageUtils.TryParse(name, out var lang))
             return;
 
         Logger.Log($"Processing {folderPath} ({name})");
@@ -59,13 +59,54 @@ public class MarkdownProcessor
         var metadata = extractMetadata(md);
         var content = extractContent(md);
 
+        var breadCrumbs = new List<Breadcrumb>();
+
+        var pathSplit = folderPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+        var title = metadata.GetValueOrDefault("title", pathSplit.Last().FormatToTitle());
+
+        if (pathSplit.Length > 1)
+        {
+            // reconstruct the path every path
+            // so that /a/b/c/d
+            // becomes /a /a/b /a/b/c /a/b/c/d
+
+            var currentPath = "";
+
+            foreach (var path in pathSplit)
+            {
+                if (path == pathSplit.Last())
+                    break;
+
+                currentPath += $"/{path}";
+
+                var art = ArticleHelper.GetArticle(currentPath, lang);
+
+                breadCrumbs.Add(new Breadcrumb
+                {
+                    Name = art is not null ? art.Metadata.Title : path.FormatToTitle(),
+                    Path = currentPath
+                });
+            }
+        }
+
+        breadCrumbs.Add(new Breadcrumb
+        {
+            Name = title,
+            Path = folderPath
+        });
+
+        Logger.Log($"    Breadcrumbs: {string.Join(" -> ", breadCrumbs.Select(x => x.Name))}");
+        Logger.Log($"    Parent Paths: {string.Join(" -> ", breadCrumbs.Select(x => x.Path))}");
+
         var article = new Article
         {
             ID = $"{folderPath}:{name}",
             Content = content,
+            Breadcrumbs = breadCrumbs,
             Metadata = new ArticleMetadata
             {
-                Title = metadata.GetValueOrDefault("title", ""),
+                Title = title,
                 Description = metadata.GetValueOrDefault("description", "No description provided."),
                 Author = metadata.GetValueOrDefault("author", "Unknown"),
                 Layout = metadata.GetValueOrDefault("layout", "article"),

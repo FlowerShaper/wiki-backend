@@ -21,6 +21,10 @@ public class Article
     [JsonProperty("meta")]
     public ArticleMetadata Metadata { get; set; } = null!;
 
+    [BsonElement("breadcrumbs")]
+    [JsonProperty("breadcrumbs")]
+    public List<Breadcrumb> Breadcrumbs { get; set; } = new();
+
     [BsonElement("content")]
     [JsonProperty("content")]
     public string Content { get; set; } = "";
