@@ -1,4 +1,5 @@
-﻿using CamelliaWiki.Backend.Components;
+﻿using System.Diagnostics.CodeAnalysis;
+using CamelliaWiki.Backend.Components;
 using CamelliaWiki.Backend.Components.Articles;
 using MongoDB.Driver;
 
@@ -7,13 +8,25 @@ namespace CamelliaWiki.Backend.Database.Helpers;
 public static class ArticleHelper
 {
     private static IMongoCollection<Article> collection => MongoDatabase.GetCollection<Article>("articles");
+    private static IMongoCollection<ArticleAlias> aliases => MongoDatabase.GetCollection<ArticleAlias>("aliases");
 
     public static List<Article> All => collection.Find(_ => true).ToList();
 
     public static void AddArticle(Article article) => collection.InsertOne(article);
+    public static void AddAlias(string alias, string article) => aliases.InsertOne(new ArticleAlias { Alias = alias, Article = article });
+
+    private static bool tryGetAlias(string alias, [NotNullWhen(true)] out string? article)
+    {
+        var a = aliases.Find(a => a.Alias == alias).FirstOrDefault();
+        article = a?.Article;
+        return !string.IsNullOrEmpty(article);
+    }
 
     public static Article? GetArticle(string path, Language lang)
     {
+        if (tryGetAlias(path, out var articleID))
+            return GetArticle(articleID, lang);
+
         var id = $"{path}:{lang}";
         var article = collection.Find(a => a.ID == id).FirstOrDefault();
 
