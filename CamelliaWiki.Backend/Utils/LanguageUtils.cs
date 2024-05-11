@@ -8,7 +8,6 @@ public static class LanguageUtils
     {
         if (lang == null)
         {
-            Logger.Log("Language not specified, defaulting to English");
             language = Language.en;
             return true;
         }

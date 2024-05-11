@@ -24,6 +24,9 @@ public static class ArticleHelper
 
     public static Article? GetArticle(string path, Language lang)
     {
+        if (path == "/random")
+            return getRandom(lang);
+
         if (tryGetAlias(path, out var articleID))
             return GetArticle(articleID, lang);
 
@@ -35,6 +38,13 @@ public static class ArticleHelper
             article = collection.Find(a => a.ID == $"{path}:en").FirstOrDefault();
 
         return article;
+    }
+
+    private static Article? getRandom(Language lang)
+    {
+        var names = collection.Find(_ => true).ToList().Select(a => a.ID.Split(":").First()).Distinct().ToList();
+        var random = new Random().Next(0, names.Count);
+        return GetArticle(names[random], lang);
     }
 
     public static void Wipe() => collection.DeleteMany(_ => true);
