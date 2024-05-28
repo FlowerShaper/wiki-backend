@@ -1,15 +1,16 @@
-﻿using CamelliaWiki.Backend.API.Components;
+﻿using System.Net;
+using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Database.Helpers;
+using Midori.API.Components.Interfaces;
 
 namespace CamelliaWiki.Backend.API.Routes.Comments;
 
-public class PostCommentRoute : IAPIRoute
+public class PostCommentRoute : IWikiAPIRoute, INeedsAuthorization
 {
-    public string Path => "/posts/:slug/comments";
+    public string RoutePath => "/posts/:slug/comments";
     public HttpMethod Method => HttpMethod.Post;
-    public bool RequiresAuthentication => true;
 
-    public async void Handle(APIInteraction interaction)
+    public async Task Handle(WikiAPIInteraction interaction)
     {
         if (!interaction.TryGetStringParameter("slug", out var slug))
             return;
@@ -18,11 +19,11 @@ public class PostCommentRoute : IAPIRoute
 
         if (string.IsNullOrEmpty(content) || string.IsNullOrWhiteSpace(content))
         {
-            await interaction.ReplyError(ErrorCodes.MissingContent);
+            await interaction.ReplyError(HttpStatusCode.BadRequest, "");
             return;
         }
 
         var comment = CommentHelper.CreateComment(slug, interaction.UserID, content);
-        await interaction.Reply(comment);
+        await interaction.Reply(HttpStatusCode.OK, comment);
     }
 }

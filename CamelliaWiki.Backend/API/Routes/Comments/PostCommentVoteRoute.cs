@@ -1,22 +1,23 @@
-﻿using CamelliaWiki.Backend.API.Components;
+﻿using System.Net;
+using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Database.Helpers;
+using Midori.API.Components.Interfaces;
 
 namespace CamelliaWiki.Backend.API.Routes.Comments;
 
-public class PostCommentVoteRoute : IAPIRoute
+public class PostCommentVoteRoute : IWikiAPIRoute, INeedsAuthorization
 {
-    public string Path => "/comments/:id/vote";
+    public string RoutePath => "/comments/:id/vote";
     public HttpMethod Method => HttpMethod.Post;
-    public bool RequiresAuthentication => true;
 
-    public async void Handle(APIInteraction interaction)
+    public async Task Handle(WikiAPIInteraction interaction)
     {
         if (!interaction.TryGetStringParameter("id", out var id))
             return;
 
         if (!CommentHelper.TryGetComment(id, out var comment))
         {
-            await interaction.ReplyError(ErrorCodes.CommentNotFound);
+            await interaction.ReplyError(HttpStatusCode.NotFound, "");
             return;
         }
 
@@ -24,7 +25,7 @@ public class PostCommentVoteRoute : IAPIRoute
 
         if (!int.TryParse(vote, out var voteValue))
         {
-            await interaction.ReplyError(ErrorCodes.InvalidParameter);
+            await interaction.ReplyError(HttpStatusCode.BadRequest, "");
             return;
         }
 
@@ -32,6 +33,6 @@ public class PostCommentVoteRoute : IAPIRoute
         comment.SetVote(interaction.UserID, voteValue);
 
         CommentHelper.Update(comment);
-        await interaction.Reply();
+        await interaction.Reply(HttpStatusCode.OK);
     }
 }

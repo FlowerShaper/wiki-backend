@@ -1,16 +1,16 @@
-﻿using CamelliaWiki.Backend.API.Components;
+﻿using System.Net;
+using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Database.Helpers;
 using CamelliaWiki.Backend.Utils;
 
 namespace CamelliaWiki.Backend.API.Routes.Articles;
 
-public class GetArticleRoute : IAPIRoute
+public class GetArticleRoute : IWikiAPIRoute
 {
-    public string Path => "/articles";
+    public string RoutePath => "/articles";
     public HttpMethod Method => HttpMethod.Get;
-    public bool RequiresAuthentication => false;
 
-    public async void Handle(APIInteraction interaction)
+    public async Task Handle(WikiAPIInteraction interaction)
     {
         if (!interaction.TryGetStringQuery("path", out var path))
             return;
@@ -21,10 +21,10 @@ public class GetArticleRoute : IAPIRoute
 
         if (article is null)
         {
-            await interaction.ReplyError(ErrorCodes.NotFound);
+            await interaction.ReplyError(HttpStatusCode.NotFound, "");
             return;
         }
 
-        await interaction.Reply(article);
+        await interaction.Reply(HttpStatusCode.OK, article);
     }
 }

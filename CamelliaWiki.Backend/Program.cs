@@ -1,7 +1,9 @@
-﻿using CamelliaWiki.Backend.API;
+﻿using System.Reflection;
+using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Bot;
 using CamelliaWiki.Backend.Database;
 using CamelliaWiki.Backend.Markdown;
+using Midori.API;
 using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend;
@@ -27,7 +29,8 @@ public static class Program
 
         await DiscordBot.StartAsync();
 
-        var api = new APIServer();
+        var api = new APIServer<WikiAPIInteraction>();
+        api.AddRoutesFromAssembly<IWikiAPIRoute>(Assembly.GetExecutingAssembly());
         api.Start(1984);
 
         await Task.Delay(-1);

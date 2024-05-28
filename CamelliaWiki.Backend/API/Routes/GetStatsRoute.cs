@@ -1,16 +1,17 @@
-﻿using CamelliaWiki.Backend.API.Components;
+﻿using System.Net;
+using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Components;
 using CamelliaWiki.Backend.Database.Helpers;
+using Midori.API.Components.Interfaces;
 
 namespace CamelliaWiki.Backend.API.Routes;
 
-public class GetStatsRoute : IAPIRoute
+public class GetStatsRoute : IWikiAPIRoute, INeedsAuthorization
 {
-    public string Path => "/stats";
+    public string RoutePath => "/stats";
     public HttpMethod Method => HttpMethod.Get;
-    public bool RequiresAuthentication => false;
 
-    public async void Handle(APIInteraction interaction)
+    public async Task Handle(WikiAPIInteraction interaction)
     {
         var dict = new Dictionary<string, long>();
 
@@ -22,7 +23,7 @@ public class GetStatsRoute : IAPIRoute
                 dict[path]++;
         }
 
-        await interaction.Reply(new Statistics
+        await interaction.Reply(HttpStatusCode.OK, new Statistics
         {
             Articles = dict.Count,
             Comments = CommentHelper.All.Count,

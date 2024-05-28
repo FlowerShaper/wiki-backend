@@ -1,15 +1,16 @@
-﻿using CamelliaWiki.Backend.API.Components;
+﻿using System.Net;
+using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Database.Helpers;
+using Midori.API.Components.Interfaces;
 
 namespace CamelliaWiki.Backend.API.Routes.Comments;
 
-public class PatchCommentRoute : IAPIRoute
+public class PatchCommentRoute : IWikiAPIRoute, INeedsAuthorization
 {
-    public string Path => "/comments/:id";
+    public string RoutePath => "/comments/:id";
     public HttpMethod Method => HttpMethod.Patch;
-    public bool RequiresAuthentication => true;
 
-    public async void Handle(APIInteraction interaction)
+    public async Task Handle(WikiAPIInteraction interaction)
     {
         if (!interaction.TryGetStringParameter("id", out var id))
             return;
@@ -18,25 +19,25 @@ public class PatchCommentRoute : IAPIRoute
 
         if (string.IsNullOrEmpty(content) || string.IsNullOrWhiteSpace(content))
         {
-            await interaction.ReplyError(ErrorCodes.MissingContent);
+            await interaction.ReplyError(HttpStatusCode.BadRequest, "");
             return;
         }
 
         if (!CommentHelper.TryGetComment(id, out var comment))
         {
-            await interaction.ReplyError(ErrorCodes.CommentNotFound);
+            await interaction.ReplyError(HttpStatusCode.NotFound, "");
             return;
         }
 
         if (comment.AuthorID != interaction.UserID)
         {
-            await interaction.ReplyError(ErrorCodes.NoPermission);
+            await interaction.ReplyError(HttpStatusCode.Unauthorized, "");
             return;
         }
 
         comment.Content = content;
         comment.LastEdited = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         CommentHelper.Update(comment);
-        await interaction.Reply();
+        await interaction.Reply(HttpStatusCode.OK);
     }
 }

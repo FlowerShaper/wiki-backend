@@ -1,32 +1,33 @@
-﻿using CamelliaWiki.Backend.API.Components;
+﻿using System.Net;
+using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Database.Helpers;
+using Midori.API.Components.Interfaces;
 
 namespace CamelliaWiki.Backend.API.Routes.Comments;
 
-public class DeleteCommentRoute : IAPIRoute
+public class DeleteCommentRoute : IWikiAPIRoute, INeedsAuthorization
 {
-    public string Path => "/comments/:id";
+    public string RoutePath => "/comments/:id";
     public HttpMethod Method => HttpMethod.Delete;
-    public bool RequiresAuthentication => true;
 
-    public async void Handle(APIInteraction interaction)
+    public async Task Handle(WikiAPIInteraction interaction)
     {
         if (!interaction.TryGetStringParameter("id", out var id))
             return;
 
         if (!CommentHelper.TryGetComment(id, out var comment))
         {
-            await interaction.ReplyError(ErrorCodes.NotFound);
+            await interaction.ReplyError(HttpStatusCode.NotFound, "");
             return;
         }
 
         if (comment.AuthorID != interaction.UserID && !UserHelper.IsStaff(interaction.UserID))
         {
-            await interaction.ReplyError(ErrorCodes.NoPermission);
+            await interaction.ReplyError(HttpStatusCode.Unauthorized, "");
             return;
         }
 
         CommentHelper.Delete(comment);
-        await interaction.Reply();
+        await interaction.Reply(HttpStatusCode.OK);
     }
 }
