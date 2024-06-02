@@ -2,11 +2,10 @@
 using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Components;
 using CamelliaWiki.Backend.Database.Helpers;
-using Midori.API.Components.Interfaces;
 
 namespace CamelliaWiki.Backend.API.Routes;
 
-public class GetStatsRoute : IWikiAPIRoute, INeedsAuthorization
+public class GetStatsRoute : IWikiAPIRoute
 {
     public string RoutePath => "/stats";
     public HttpMethod Method => HttpMethod.Get;
