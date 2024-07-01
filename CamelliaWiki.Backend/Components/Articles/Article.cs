@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace CamelliaWiki.Backend.Components.Articles;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Article
+public class Article : IComparable<Article>
 {
     [BsonId]
     public string ID { get; init; } = "";
@@ -28,4 +28,15 @@ public class Article
     [BsonElement("content")]
     [JsonProperty("content")]
     public string Content { get; set; } = "";
+
+    public int CompareTo(Article? other)
+    {
+        if (ReferenceEquals(this, other))
+            return 0;
+
+        if (ReferenceEquals(null, other))
+            return 1;
+
+        return Metadata.Date.CompareTo(other.Metadata.Date);
+    }
 }

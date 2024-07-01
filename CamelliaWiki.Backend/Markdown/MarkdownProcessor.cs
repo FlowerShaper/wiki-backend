@@ -110,6 +110,13 @@ public class MarkdownProcessor
                 Description = metadata.GetValueOrDefault("description", "No description provided."),
                 Author = metadata.GetValueOrDefault("author", "Unknown"),
                 Layout = metadata.GetValueOrDefault("layout", "article"),
+                Type = metadata.GetValueOrDefault("type", "article") switch
+                {
+                    "article" => ArticleType.Article,
+                    "news" => ArticleType.News,
+                    "community" => ArticleType.Community,
+                    _ => ArticleType.Article,
+                },
                 Date = metadata.TryGetValue("date", out var value) ? parseDate(value) : 0
             }
         };
