@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using CamelliaWiki.Backend.API.Components;
-using CamelliaWiki.Backend.Components;
 using CamelliaWiki.Backend.Database.Helpers;
+using CamelliaWiki.Backend.Models;
 
 namespace CamelliaWiki.Backend.API.Routes;
 

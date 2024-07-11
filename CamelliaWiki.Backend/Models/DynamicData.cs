@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace CamelliaWiki.Backend.Components;
+namespace CamelliaWiki.Backend.Models;
 
 public class DynamicData
 {

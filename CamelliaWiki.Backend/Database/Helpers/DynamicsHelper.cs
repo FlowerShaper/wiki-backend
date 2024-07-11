@@ -1,4 +1,4 @@
-﻿using CamelliaWiki.Backend.Components;
+﻿using CamelliaWiki.Backend.Models;
 using MongoDB.Driver;
 
 namespace CamelliaWiki.Backend.Database.Helpers;

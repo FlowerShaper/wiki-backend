@@ -1,10 +1,10 @@
-﻿using CamelliaWiki.Backend.Components.Users;
-using CamelliaWiki.Backend.Database.Helpers;
+﻿using CamelliaWiki.Backend.Database.Helpers;
+using CamelliaWiki.Backend.Models.Users;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace CamelliaWiki.Backend.Components.Comments;
+namespace CamelliaWiki.Backend.Models.Comments;
 
 public class Comment
 {

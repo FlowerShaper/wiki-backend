@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CamelliaWiki.Backend.Components.Users;
 using CamelliaWiki.Backend.Database.Helpers;
+using CamelliaWiki.Backend.Models.Users;
 using CamelliaWiki.Backend.Utils;
 using Midori.API.Components;
 using Midori.API.Components.Interfaces;

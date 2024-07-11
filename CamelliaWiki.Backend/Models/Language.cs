@@ -1,4 +1,4 @@
-﻿namespace CamelliaWiki.Backend.Components;
+﻿namespace CamelliaWiki.Backend.Models;
 
 // ReSharper disable InconsistentNaming
 public enum Language

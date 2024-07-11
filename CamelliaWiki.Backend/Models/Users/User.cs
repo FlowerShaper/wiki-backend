@@ -2,7 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace CamelliaWiki.Backend.Components.Users;
+namespace CamelliaWiki.Backend.Models.Users;
 
 /// <summary>
 /// A user. Database-stored users are only used in fall-back scenarios where we can't get the user from Discord.

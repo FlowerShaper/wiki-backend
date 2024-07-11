@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace CamelliaWiki.Backend.Components.Articles;
+namespace CamelliaWiki.Backend.Models.Articles;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class ArticleMetadata

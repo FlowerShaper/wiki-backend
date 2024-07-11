@@ -1,4 +1,4 @@
-﻿using CamelliaWiki.Backend.Components;
+﻿using CamelliaWiki.Backend.Models;
 
 namespace CamelliaWiki.Backend.Utils;
 

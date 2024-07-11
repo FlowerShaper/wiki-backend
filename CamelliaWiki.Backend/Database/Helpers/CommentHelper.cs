@@ -1,4 +1,4 @@
-﻿using CamelliaWiki.Backend.Components.Comments;
+﻿using CamelliaWiki.Backend.Models.Comments;
 using CamelliaWiki.Backend.Utils;
 using MongoDB.Bson;
 using MongoDB.Driver;

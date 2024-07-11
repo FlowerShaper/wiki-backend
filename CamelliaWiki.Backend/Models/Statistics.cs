@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CamelliaWiki.Backend.Components;
+namespace CamelliaWiki.Backend.Models;
 
 public class Statistics
 {

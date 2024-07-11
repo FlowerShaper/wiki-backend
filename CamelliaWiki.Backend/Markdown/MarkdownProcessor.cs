@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
-using CamelliaWiki.Backend.Components.Articles;
 using CamelliaWiki.Backend.Database.Helpers;
+using CamelliaWiki.Backend.Models.Articles;
 using CamelliaWiki.Backend.Utils;
 
 namespace CamelliaWiki.Backend.Markdown;

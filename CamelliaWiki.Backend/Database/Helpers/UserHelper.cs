@@ -1,5 +1,5 @@
 ﻿using CamelliaWiki.Backend.Bot;
-using CamelliaWiki.Backend.Components.Users;
+using CamelliaWiki.Backend.Models.Users;
 using MongoDB.Driver;
 using DSharpPlus;
 using DSharpPlus.Entities;

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CamelliaWiki.Backend.Components;
-using CamelliaWiki.Backend.Components.Articles;
+using CamelliaWiki.Backend.Models;
+using CamelliaWiki.Backend.Models.Articles;
 using MongoDB.Driver;
 
 namespace CamelliaWiki.Backend.Database.Helpers;

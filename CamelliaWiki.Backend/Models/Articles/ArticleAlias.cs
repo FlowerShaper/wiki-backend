@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace CamelliaWiki.Backend.Components.Articles;
+namespace CamelliaWiki.Backend.Models.Articles;
 
 public class ArticleAlias
 {
