@@ -20,7 +20,7 @@ public class GetPopularArticleRoute : IWikiAPIRoute
 
         var views = Program.ViewManager.GetToday();
 
-        Logger.Log($"fetched articles at {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
+        Logger.Log($"fetched views at {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
 
         var unique = new List<ArticleView>();
 
@@ -32,11 +32,11 @@ public class GetPopularArticleRoute : IWikiAPIRoute
             unique.Add(view);
         }
 
-        Logger.Log($"sorted unique {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
+        Logger.Log($"sorted unique at {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
 
         var highest = unique.GroupBy(x => x.Article).MaxBy(x => x.Count());
 
-        Logger.Log($"fetched highest {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
+        Logger.Log($"found highest at {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
 
         if (highest is null)
         {
