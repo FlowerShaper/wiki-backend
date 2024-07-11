@@ -10,7 +10,7 @@ public class Article : IComparable<Article>
     public string ID { get; init; } = "";
 
     [BsonIgnore]
-    [JsonProperty("path")]
+    [JsonProperty("url")]
     public string Path => ID.Split(':')[0];
 
     [BsonIgnore]

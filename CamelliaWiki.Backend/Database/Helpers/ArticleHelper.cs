@@ -15,7 +15,7 @@ public static class ArticleHelper
     public static void AddArticle(Article article) => collection.InsertOne(article);
     public static void AddAlias(string alias, string article) => aliases.InsertOne(new ArticleAlias { Alias = alias, Article = article });
 
-    private static bool tryGetAlias(string alias, [NotNullWhen(true)] out string? article)
+    public static bool TryGetAlias(string alias, [NotNullWhen(true)] out string? article)
     {
         var a = aliases.Find(a => a.Alias == alias).FirstOrDefault();
         article = a?.Article;
@@ -27,7 +27,7 @@ public static class ArticleHelper
         if (path == "/random")
             return getRandom(lang);
 
-        if (tryGetAlias(path, out var articleID))
+        if (TryGetAlias(path, out var articleID))
             return GetArticle(articleID, lang);
 
         var id = $"{path}:{lang}";
