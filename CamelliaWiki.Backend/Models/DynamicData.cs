@@ -26,5 +26,6 @@ public class DynamicData
 public enum DynamicDataType
 {
     FeaturedPost = 0,
-    PopularPost = 1
+    PopularPost = 1,
+    HomePosts
 }
