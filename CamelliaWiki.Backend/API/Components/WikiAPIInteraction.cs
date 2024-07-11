@@ -9,6 +9,9 @@ namespace CamelliaWiki.Backend.API.Components;
 
 public class WikiAPIInteraction : APIInteraction, IHasAuthorizationInfo
 {
+    protected override string[] AllowedHeaders => base.AllowedHeaders.Concat(extra_headers).ToArray();
+    private static readonly string[] extra_headers = { "baggage", "sentry-trace" };
+
     public bool IsAuthorized => UserID != 0;
     public string AuthorizationError { get; private set; } = null!;
 
