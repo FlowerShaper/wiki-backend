@@ -3,6 +3,7 @@ using CamelliaWiki.Backend.Models.Users;
 using MongoDB.Driver;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using Midori.Logging;
 
 namespace CamelliaWiki.Backend.Database.Helpers;
 
@@ -24,7 +25,7 @@ public static class UserHelper
         }
         catch
         {
-            Logger.Log($"Failed to get user {id}");
+            Logger.Log($"Failed to get user {id}", LoggingTarget.Network, LogLevel.Error);
 
             if (!allowFallback)
                 return null;

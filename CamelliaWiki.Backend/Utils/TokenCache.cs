@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using Midori.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace CamelliaWiki.Backend.Utils;
@@ -40,7 +41,7 @@ public static class TokenCache
         }
         catch (Exception e)
         {
-            Logger.Log(e);
+            Logger.Error(e, "Failed to fetch user!", LoggingTarget.Network);
             return false;
         }
     }

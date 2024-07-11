@@ -1,0 +1,59 @@
+﻿using System.Diagnostics;
+using System.Net;
+using CamelliaWiki.Backend.API.Components;
+using CamelliaWiki.Backend.Components.Views;
+using CamelliaWiki.Backend.Database.Helpers;
+using CamelliaWiki.Backend.Models;
+using Midori.Logging;
+
+namespace CamelliaWiki.Backend.API.Routes;
+
+public class GetPopularArticleRoute : IWikiAPIRoute
+{
+    public string RoutePath => "/popular";
+    public HttpMethod Method => HttpMethod.Get;
+
+    public async Task Handle(WikiAPIInteraction interaction)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        var views = Program.ViewManager.GetToday();
+
+        Logger.Log($"fetched articles at {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
+
+        var unique = new List<ArticleView>();
+
+        foreach (var view in views)
+        {
+            if (unique.Any(x => x.IP == view.IP && x.Article == view.Article))
+                continue;
+
+            unique.Add(view);
+        }
+
+        Logger.Log($"sorted unique {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
+
+        var highest = unique.GroupBy(x => x.Article).MaxBy(x => x.Count());
+
+        Logger.Log($"fetched highest {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
+
+        if (highest is null)
+        {
+            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            return;
+        }
+
+        var article = ArticleHelper.GetArticle(highest.Key, Language.en);
+
+        if (article is null)
+        {
+            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            return;
+        }
+
+        await interaction.Reply(HttpStatusCode.OK, article);
+        Logger.Log($"finished in {stopwatch.ElapsedMilliseconds}ms", LoggingTarget.Network, LogLevel.Debug);
+        stopwatch.Stop();
+    }
+}

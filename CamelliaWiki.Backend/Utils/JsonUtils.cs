@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Midori.Logging;
+using Newtonsoft.Json;
 using JsonException = System.Text.Json.JsonException;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -27,7 +28,7 @@ public static class JsonUtils
         catch (JsonException ex)
         {
             result = default;
-            Logger.Log(ex);
+            Logger.Error(ex, "Failed to parse json!");
             return false;
         }
     }

@@ -2,12 +2,14 @@
 using CamelliaWiki.Backend.Database.Helpers;
 using CamelliaWiki.Backend.Models.Articles;
 using CamelliaWiki.Backend.Utils;
+using Midori.Logging;
 
 namespace CamelliaWiki.Backend.Markdown;
 
 public class MarkdownProcessor
 {
     private static readonly Regex metadata_regex = new(@"^---([\s\S]*?)---", RegexOptions.Multiline);
+    private static Logger logger { get; } = Logger.GetLogger("MarkdownProcessor");
 
     private string dataDirectory { get; }
 
@@ -53,7 +55,7 @@ public class MarkdownProcessor
         if (!LanguageUtils.TryParse(name, out var lang))
             return;
 
-        Logger.Log($"Processing {folderPath} ({name})");
+        logger.Add($"Processing {folderPath} ({name})");
 
         var md = File.ReadAllText(file);
         var metadata = extractMetadata(md);
@@ -96,8 +98,8 @@ public class MarkdownProcessor
             Path = folderPath
         });
 
-        Logger.Log($"    Breadcrumbs: {string.Join(" -> ", breadCrumbs.Select(x => x.Name))}");
-        Logger.Log($"    Parent Paths: {string.Join(" -> ", breadCrumbs.Select(x => x.Path))}");
+        logger.Add($"    Breadcrumbs: {string.Join(" -> ", breadCrumbs.Select(x => x.Name))}");
+        logger.Add($"    Parent Paths: {string.Join(" -> ", breadCrumbs.Select(x => x.Path))}");
 
         var article = new Article
         {
