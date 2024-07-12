@@ -26,7 +26,7 @@ public class GetStatsRoute : IWikiAPIRoute
         {
             Articles = dict.Count,
             Comments = CommentHelper.All.Count,
-            UniqueVisitors = 0
+            UniqueVisitors = Program.Visitors.TotalCount
         });
     }
 }

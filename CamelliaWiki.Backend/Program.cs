@@ -14,6 +14,7 @@ public static class Program
     public static Config Config { get; private set; } = null!;
 
     public static ViewManager ViewManager { get; private set; } = null!;
+    public static VisitorManager Visitors { get; private set; } = null!;
 
     public static async Task Main(string[] args)
     {
@@ -32,6 +33,7 @@ public static class Program
 
         await DiscordBot.StartAsync();
         ViewManager = new ViewManager();
+        Visitors = new VisitorManager();
 
         var api = new APIServer<WikiAPIInteraction>();
         api.AddRoutesFromAssembly<IWikiAPIRoute>(Assembly.GetExecutingAssembly());

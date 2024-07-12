@@ -38,8 +38,8 @@ public class ViewManager : IDisposable
         var str = ip.ToString();
 
         // ignore localhost
-        /*if (str is "127.0.0.1" or "::1")
-            return;*/
+        if (str is "127.0.0.1" or "::1")
+            return;
 
         collection.InsertOne(new ArticleView(ip, article));
     }

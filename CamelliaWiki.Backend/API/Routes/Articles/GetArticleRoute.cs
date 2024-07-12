@@ -27,5 +27,6 @@ public class GetArticleRoute : IWikiAPIRoute
 
         await interaction.Reply(HttpStatusCode.OK, article);
         Program.ViewManager.Log(interaction.RemoteIP, article.Path);
+        Program.Visitors.Add(interaction.RemoteIP);
     }
 }
