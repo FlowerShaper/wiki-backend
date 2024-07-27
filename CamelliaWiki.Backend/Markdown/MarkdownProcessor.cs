@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using CamelliaWiki.Backend.Database.Helpers;
 using CamelliaWiki.Backend.Models.Articles;
 using CamelliaWiki.Backend.Utils;
@@ -30,7 +31,15 @@ public class MarkdownProcessor
     public void Start()
     {
         ArticleHelper.Wipe();
+
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         processFolder(dataDirectory);
+
+        stopwatch.Stop();
+
+        logger.Add($"Finished in {stopwatch.ElapsedMilliseconds}ms");
     }
 
     private void processFolder(string folder)
