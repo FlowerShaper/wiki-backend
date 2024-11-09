@@ -1,13 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using CamelliaWiki.Backend.Database.Helpers;
 using CamelliaWiki.Backend.Models.Users;
 using CamelliaWiki.Backend.Utils;
-using Midori.API.Components;
+using Midori.API;
 using Midori.API.Components.Interfaces;
+using Midori.API.Components.Json;
 
 namespace CamelliaWiki.Backend.API.Components;
 
-public class WikiAPIInteraction : APIInteraction, IHasAuthorizationInfo
+public class WikiAPIInteraction : JsonInteraction, IHasAuthorizationInfo
 {
     protected override string[] AllowedHeaders => base.AllowedHeaders.Concat(extra_headers).ToArray();
     private static readonly string[] extra_headers = { "baggage", "sentry-trace" };
@@ -65,5 +67,17 @@ public class WikiAPIInteraction : APIInteraction, IHasAuthorizationInfo
         {
             return false;
         }
+    }
+
+    public bool TryGetULongParameter(string name, out ulong value)
+    {
+        if (TryGetStringParameter(name, out var s) && ulong.TryParse(s, out value))
+            return true;
+
+        if (RespondOnInvalidParameter)
+            ReplyError(HttpStatusCode.BadRequest, DefaultResponseStrings.InvalidParameter(name, "ulong")).Wait();
+
+        value = 0L;
+        return false;
     }
 }

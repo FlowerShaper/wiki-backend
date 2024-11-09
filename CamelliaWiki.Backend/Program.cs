@@ -37,7 +37,7 @@ public static class Program
 
         var api = new APIServer<WikiAPIInteraction>();
         api.AddRoutesFromAssembly<IWikiAPIRoute>(Assembly.GetExecutingAssembly());
-        api.Start(1984);
+        api.Start(new[] { "http://localhost:1984/" });
 
         await Task.Delay(-1);
     }

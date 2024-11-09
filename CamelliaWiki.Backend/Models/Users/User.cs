@@ -13,8 +13,12 @@ public class User
     /// The user's ID.
     /// </summary>
     [BsonId]
-    [JsonProperty("id")]
+    [JsonIgnore]
     public ulong ID { get; set; }
+
+    [BsonIgnore]
+    [JsonProperty("id")]
+    public string StringID => ID.ToString();
 
     /// <summary>
     /// The user's username.

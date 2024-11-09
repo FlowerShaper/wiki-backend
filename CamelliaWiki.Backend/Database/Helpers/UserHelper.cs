@@ -23,9 +23,9 @@ public static class UserHelper
         {
             user = DiscordBot.GetUser(id);
         }
-        catch
+        catch (Exception ex)
         {
-            Logger.Log($"Failed to get user {id}", LoggingTarget.Network, LogLevel.Error);
+            Logger.Error(ex, $"Failed to get user {id}", LoggingTarget.Network);
 
             if (!allowFallback)
                 return null;
