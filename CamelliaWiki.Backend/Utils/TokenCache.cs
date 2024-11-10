@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using CamelliaWiki.Backend.Bot;
 using Midori.Logging;
 using Newtonsoft.Json.Linq;
 
@@ -39,6 +40,7 @@ public static class TokenCache
 
                 id = ulong.Parse(uid);
 
+                DiscordBot.LoadUser(id).Wait();
                 tokens.Add(token, id);
                 return true;
             }

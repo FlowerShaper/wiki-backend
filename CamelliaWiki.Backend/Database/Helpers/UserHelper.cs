@@ -4,6 +4,7 @@ using MongoDB.Driver;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using Midori.Logging;
+using Midori.Utils;
 
 namespace CamelliaWiki.Backend.Database.Helpers;
 
@@ -51,10 +52,14 @@ public static class UserHelper
             Username = user.Username,
             Nickname = user.Nickname ?? "",
             AvatarUrl = user.AvatarUrl,
+            BannerUrl = user.BannerUrl,
             Color = user.Color.ToString(),
             JoinDate = hasJoinDate ? cached!.JoinDate : DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             IsStaff = user.Permissions.HasPermission(Permissions.ModerateMembers)
         };
+
+        Logger.Log($"wah {user.BannerHash}");
+        Logger.Log(u.Serialize());
 
         if (cached == null)
             users.InsertOne(u);

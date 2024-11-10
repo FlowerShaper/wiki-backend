@@ -42,6 +42,13 @@ public class User
     public string AvatarUrl { get; set; } = "";
 
     /// <summary>
+    /// The url of the user's banner.
+    /// </summary>
+    [BsonElement("banner")]
+    [JsonProperty("banner")]
+    public string BannerUrl { get; set; } = "";
+
+    /// <summary>
     /// The user's role color.
     /// </summary>
     [BsonIgnore]
