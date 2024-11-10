@@ -46,17 +46,19 @@ public static class UserHelper
 
         var hasJoinDate = cached != null && cached.JoinDate != 0;
 
+        // ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
         var u = new User
         {
             ID = user.Id,
             Username = user.Username,
             Nickname = user.Nickname ?? "",
             AvatarUrl = user.AvatarUrl,
-            BannerUrl = user.BannerUrl,
+            BannerUrl = user.BannerUrl ?? cached?.BannerUrl ?? "",
             Color = user.Color.ToString(),
             JoinDate = hasJoinDate ? cached!.JoinDate : DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             IsStaff = user.Permissions.HasPermission(Permissions.ModerateMembers)
         };
+        // ReSharper enable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
         Logger.Log($"wah {user.BannerHash}");
         Logger.Log(u.Serialize());
