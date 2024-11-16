@@ -27,10 +27,6 @@ public class GetRecentRoute : IWikiAPIRoute
             case "news":
                 articles = articles.Where(x => x.Metadata.Type == ArticleType.News).ToList();
                 break;
-
-            case "community":
-                articles = articles.Where(x => x.Metadata.Type == ArticleType.Community).ToList();
-                break;
         }
 
         await interaction.Reply(HttpStatusCode.OK, articles.Take(count));

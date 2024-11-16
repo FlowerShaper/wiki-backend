@@ -126,7 +126,6 @@ public class MarkdownProcessor
                 {
                     "article" => ArticleType.Article,
                     "news" => ArticleType.News,
-                    "community" => ArticleType.Community,
                     _ => ArticleType.Article,
                 },
                 Date = metadata.TryGetValue("date", out var value) ? parseDate(value) : 0

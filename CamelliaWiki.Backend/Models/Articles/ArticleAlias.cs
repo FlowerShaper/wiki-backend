@@ -5,8 +5,8 @@ namespace CamelliaWiki.Backend.Models.Articles;
 public class ArticleAlias
 {
     [BsonId]
-    public string Alias { get; set; } = null!;
+    public string Alias { get; init; } = null!;
 
     [BsonElement("article")]
-    public string Article { get; set; } = null!;
+    public string Article { get; init; } = null!;
 }

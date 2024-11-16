@@ -1,14 +1,11 @@
 ﻿using System.Net;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace CamelliaWiki.Backend.Components.Views;
 
+[BsonNoId]
 public class ArticleView
 {
-    [BsonId]
-    public ObjectId ID { get; init; } = ObjectId.GenerateNewId();
-
     [BsonElement("ip")]
     public string IP { get; set; } = null!;
 

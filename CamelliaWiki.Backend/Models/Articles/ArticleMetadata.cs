@@ -45,10 +45,5 @@ public enum ArticleType
     /// <summary>
     /// News about wiki updates or similar.
     /// </summary>
-    News = 2,
-
-    /// <summary>
-    /// Community-written blog posts.
-    /// </summary>
-    Community = 3
+    News = 2
 }

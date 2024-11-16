@@ -9,8 +9,6 @@ public static class DiscordBot
 
     private static DiscordClient bot { get; set; } = null!;
 
-    private static List<ulong> fetched { get; } = new();
-
     public static async Task StartAsync()
     {
         if (bot != null)
@@ -28,10 +26,7 @@ public static class DiscordBot
         await bot.ConnectAsync();
     }
 
-    public static async Task LoadUser(ulong id)
-    {
-        await bot.GetUserAsync(id, true);
-    }
+    public static async Task LoadUser(ulong id) => await bot.GetUserAsync(id, true);
 
     public static DiscordMember? GetUser(ulong id)
     {
