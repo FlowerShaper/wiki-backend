@@ -13,7 +13,7 @@ public class GetHomeArticlesRoute : IWikiAPIRoute
 
     public async Task Handle(WikiAPIInteraction interaction)
     {
-        var list = new List<Article>();
+        var list = new List<IEnumerable<Article>>();
         var value = DynamicsHelper.Get(DynamicDataType.HomePosts);
 
         if (string.IsNullOrWhiteSpace(value))
@@ -22,10 +22,15 @@ public class GetHomeArticlesRoute : IWikiAPIRoute
             return;
         }
 
-        var split = value.Split(';');
-        var articles = split.Select(s => ArticleHelper.GetArticle(s, Language.en));
+        var categories = value.Split("::");
 
-        list.AddRange(articles.OfType<Article>());
+        foreach (var category in categories)
+        {
+            var split = category.Split(';');
+            var articles = split.Select(s => ArticleHelper.GetArticle(s, Language.en));
+            list.Add(articles.OfType<Article>());
+        }
+
         await interaction.Reply(HttpStatusCode.OK, list);
     }
 }
