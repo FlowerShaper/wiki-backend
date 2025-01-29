@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using CamelliaWiki.Backend.Database.Helpers;
 using CamelliaWiki.Backend.Models.Users;
 using CamelliaWiki.Backend.Utils;
 using Midori.API;
 using Midori.API.Components.Interfaces;
 using Midori.API.Components.Json;
+using Midori.Networking;
 
 namespace CamelliaWiki.Backend.API.Components;
 
@@ -23,7 +23,7 @@ public class WikiAPIInteraction : JsonInteraction, IHasAuthorizationInfo
     protected override void OnPopulate()
     {
         var token = Request.Headers["Authorization"];
-        token ??= Request.Cookies["token"]?.Value;
+        // token ??= Request.Cookies["token"]?.Value;
 
         if (string.IsNullOrEmpty(token))
         {

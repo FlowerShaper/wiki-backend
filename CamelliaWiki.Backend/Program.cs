@@ -1,10 +1,12 @@
-﻿using System.Reflection;
+﻿using System.Net;
+using System.Reflection;
 using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Bot;
 using CamelliaWiki.Backend.Components;
 using CamelliaWiki.Backend.Database;
 using CamelliaWiki.Backend.Markdown;
 using Midori.API;
+using Midori.Networking;
 using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend;
@@ -35,9 +37,9 @@ public static class Program
         ViewManager = new ViewManager();
         Visitors = new VisitorManager();
 
-        var api = new APIServer<WikiAPIInteraction>();
-        api.AddRoutesFromAssembly<IWikiAPIRoute>(Assembly.GetExecutingAssembly());
-        api.Start(new[] { "http://localhost:1984/" });
+        var server = new HttpServer();
+        server.MapModule<APIServer<WikiAPIInteraction>>("/", m => m.AddRoutesFromAssembly<IWikiAPIRoute>(Assembly.GetExecutingAssembly()));
+        server.Start(IPAddress.Any, 1984);
 
         await Task.Delay(-1);
     }
