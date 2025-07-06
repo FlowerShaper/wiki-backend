@@ -4,7 +4,7 @@ using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Bot;
 using CamelliaWiki.Backend.Components;
 using CamelliaWiki.Backend.Database;
-using CamelliaWiki.Backend.Markdown;
+using CamelliaWiki.Backend.Processing;
 using Midori.API;
 using Midori.Networking;
 using Newtonsoft.Json;
@@ -29,7 +29,7 @@ public static class Program
 
         if (args.Contains("--md"))
         {
-            MarkdownProcessor.Run(Config.DataDirectory);
+            DataProcessor.Run(Config.DataDirectory);
             return;
         }
 

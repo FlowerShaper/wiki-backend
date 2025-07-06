@@ -1,0 +1,22 @@
+﻿using CamelliaWiki.Backend.API.Components;
+using CamelliaWiki.Backend.Database.Helpers;
+using Midori.Networking;
+
+namespace CamelliaWiki.Backend.API.Routes.Discography;
+
+public class AllAlbumsRoute : IWikiAPIRoute
+{
+    public string RoutePath => "/discography/albums";
+    public HttpMethod Method => HttpMethod.Get;
+
+    public async Task Handle(WikiAPIInteraction interaction)
+    {
+        var albums = DiscographyHelper.AllAlbums;
+        var tracks = DiscographyHelper.AllTracks;
+
+        foreach (var album in albums)
+            tracks.RemoveAll(t => album.Discs.Any(d => d.Tracks.Contains(t.ID)));
+
+        await interaction.Reply(HttpStatusCode.OK, albums.Select(x => x.ToAPI()));
+    }
+}

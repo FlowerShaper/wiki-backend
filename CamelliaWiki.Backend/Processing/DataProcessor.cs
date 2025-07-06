@@ -2,19 +2,20 @@
 using System.Text.RegularExpressions;
 using CamelliaWiki.Backend.Database.Helpers;
 using CamelliaWiki.Backend.Models.Articles;
+using CamelliaWiki.Backend.Models.Discography;
 using CamelliaWiki.Backend.Utils;
 using Midori.Logging;
 
-namespace CamelliaWiki.Backend.Markdown;
+namespace CamelliaWiki.Backend.Processing;
 
-public class MarkdownProcessor
+public class DataProcessor
 {
     private static readonly Regex metadata_regex = new(@"^---([\s\S]*?)---", RegexOptions.Multiline);
     private static Logger logger { get; } = Logger.GetLogger("MarkdownProcessor");
 
     private string dataDirectory { get; }
 
-    private MarkdownProcessor(string dataDirectory)
+    private DataProcessor(string dataDirectory)
     {
         this.dataDirectory = dataDirectory.Replace('/', Path.DirectorySeparatorChar);
     }
@@ -24,13 +25,14 @@ public class MarkdownProcessor
         if (!Directory.Exists(path))
             return;
 
-        var runner = new MarkdownProcessor(path);
+        var runner = new DataProcessor(path);
         runner.Start();
     }
 
     public void Start()
     {
         ArticleHelper.Wipe();
+        DiscographyHelper.Wipe();
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
@@ -44,17 +46,29 @@ public class MarkdownProcessor
 
     private void processFolder(string folder)
     {
-        var files = Directory.GetFiles(folder, "*.md", SearchOption.TopDirectoryOnly);
-        var subFolders = Directory.GetDirectories(folder, "*", SearchOption.TopDirectoryOnly);
+        var name = Path.GetFileName(folder);
+        if (name.StartsWith("__")) return;
 
-        foreach (var file in files)
-            processFile(file);
+        processFolderMarkdown(folder);
+        processFolderData(folder);
+
+        var subFolders = Directory.GetDirectories(folder, "*", SearchOption.TopDirectoryOnly);
 
         foreach (var subFolder in subFolders)
             processFolder(subFolder);
     }
 
-    private void processFile(string file)
+    #region Markdown
+
+    private void processFolderMarkdown(string folder)
+    {
+        var files = Directory.GetFiles(folder, "*.md", SearchOption.TopDirectoryOnly);
+
+        foreach (var file in files)
+            processMarkdownFile(file);
+    }
+
+    private void processMarkdownFile(string file)
     {
         var folderPath = Path.GetDirectoryName(file)!.Replace(dataDirectory, "");
         folderPath = folderPath.Replace(Path.DirectorySeparatorChar, '/');
@@ -197,4 +211,63 @@ public class MarkdownProcessor
         var metadataString = match.Groups[0].Value;
         return md.Replace(metadataString, "");
     }
+
+    #endregion
+
+    #region Data
+
+    private void processFolderData(string folder)
+    {
+        var files = Directory.GetFiles(folder, "*.json", SearchOption.TopDirectoryOnly);
+
+        foreach (var file in files)
+        {
+            var relative = file.Replace(dataDirectory, "").Replace(Path.DirectorySeparatorChar, '/');
+
+            if (relative.StartsWith("/_data/albums"))
+                processAlbumData(file);
+            else if (relative.StartsWith("/_data/tracks"))
+                processTrackData(file);
+            else
+                logger.Add($"Unsure how to process data file: {relative}", LogLevel.Warning);
+        }
+    }
+
+    private void processAlbumData(string file)
+    {
+        logger.Add($"Processing album {file}");
+        var json = File.ReadAllText(file);
+        var album = json.Deserialize<DiscographyAlbum>();
+
+        if (album == null)
+        {
+            logger.Add($"Failed to deserialize album data from '{file}'!", LogLevel.Error);
+            return;
+        }
+
+        album.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
+        DiscographyHelper.AddAlbum(album);
+
+        logger.Add($"    Title: {album.Title} ({album.ID})");
+    }
+
+    private void processTrackData(string file)
+    {
+        logger.Add($"Processing track {file}");
+        var json = File.ReadAllText(file);
+        var track = json.Deserialize<DiscographyTrack>();
+
+        if (track == null)
+        {
+            logger.Add($"Failed to deserialize track data from '{file}'!", LogLevel.Error);
+            return;
+        }
+
+        track.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
+        DiscographyHelper.AddTrack(track);
+
+        logger.Add($"    Title: {track.Title} ({track.ID})");
+    }
+
+    #endregion
 }
