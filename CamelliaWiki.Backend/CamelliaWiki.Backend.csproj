@@ -10,7 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="DSharpPlus" Version="5.0.0-nightly-01951" />
-      <PackageReference Include="flustix.Midori" Version="2025.129.0" />
+      <PackageReference Include="flustix.Midori" Version="2025.706.0" />
       <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
       <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

@@ -15,7 +15,7 @@ public class PostCommentRoute : IWikiAPIRoute, INeedsAuthorization
         if (!interaction.TryGetStringParameter("slug", out var slug))
             return;
 
-        var content = await new StreamReader(interaction.Request.InputStream).ReadToEndAsync();
+        var content = await new StreamReader(interaction.Request.BodyStream).ReadToEndAsync();
 
         if (string.IsNullOrEmpty(content) || string.IsNullOrWhiteSpace(content))
         {

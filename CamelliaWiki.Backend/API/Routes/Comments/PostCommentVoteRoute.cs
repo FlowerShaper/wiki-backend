@@ -21,7 +21,7 @@ public class PostCommentVoteRoute : IWikiAPIRoute, INeedsAuthorization
             return;
         }
 
-        var vote = await new StreamReader(interaction.Request.InputStream).ReadToEndAsync();
+        var vote = await new StreamReader(interaction.Request.BodyStream).ReadToEndAsync();
 
         if (!int.TryParse(vote, out var voteValue))
         {

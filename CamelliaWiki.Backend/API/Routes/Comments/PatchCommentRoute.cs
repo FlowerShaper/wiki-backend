@@ -15,7 +15,7 @@ public class PatchCommentRoute : IWikiAPIRoute, INeedsAuthorization
         if (!interaction.TryGetStringParameter("id", out var id))
             return;
 
-        var content = await new StreamReader(interaction.Request.InputStream).ReadToEndAsync();
+        var content = await new StreamReader(interaction.Request.BodyStream).ReadToEndAsync();
 
         if (string.IsNullOrEmpty(content) || string.IsNullOrWhiteSpace(content))
         {

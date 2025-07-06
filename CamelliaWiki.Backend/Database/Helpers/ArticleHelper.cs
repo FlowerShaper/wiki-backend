@@ -11,9 +11,19 @@ public static class ArticleHelper
     private static IMongoCollection<ArticleAlias> aliases => MongoDatabase.GetCollection<ArticleAlias>("aliases");
 
     public static List<Article> All => collection.Find(_ => true).ToList();
+    public static List<Article> AllUnique => collection.Find(_ => true).ToList();
 
     public static void AddArticle(Article article) => collection.InsertOne(article);
     public static void AddAlias(string alias, string article) => aliases.InsertOne(new ArticleAlias { Alias = alias, Article = article });
+
+    public static List<Article> GetAllUniqueArticles(Language lang)
+    {
+        var all = All;
+        return all.GroupBy(a => a.Path)
+                  .Select(g => g.FirstOrDefault(a => a.Language == lang) ?? g.FirstOrDefault(a => a.Language == Language.en))
+                  .OfType<Article>()
+                  .ToList();
+    }
 
     public static bool TryGetAlias(string alias, [NotNullWhen(true)] out string? article)
     {

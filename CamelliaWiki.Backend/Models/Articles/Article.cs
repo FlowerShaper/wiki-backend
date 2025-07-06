@@ -1,4 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using CamelliaWiki.Backend.Utils;
+using Midori.Searching;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.Models.Articles;
@@ -11,11 +13,15 @@ public class Article : IComparable<Article>
 
     [BsonIgnore]
     [JsonProperty("url")]
+    [Searchable("path")]
     public string Path => ID.Split(':')[0];
 
     [BsonIgnore]
+    public Language Language => LanguageUtils.TryParse(LanguageCode, out var lang) ? lang : Language.en;
+
+    [BsonIgnore]
     [JsonProperty("lang")]
-    public string Language => ID.Split(':')[1];
+    public string LanguageCode => ID.Split(':')[1];
 
     [BsonElement("meta")]
     [JsonProperty("meta")]
@@ -39,4 +45,18 @@ public class Article : IComparable<Article>
 
         return Metadata.Date.CompareTo(other.Metadata.Date);
     }
+
+    #region Searching
+
+    [BsonIgnore]
+    [Searchable("title")]
+    [Obsolete("Use Metadata.Title instead.")]
+    public string SearchableTitle => Metadata.Title;
+
+    [BsonIgnore]
+    [Searchable("description")]
+    [Obsolete("Use Metadata.Description instead.")]
+    public string SearchableDescription => Metadata.Description;
+
+    #endregion
 }

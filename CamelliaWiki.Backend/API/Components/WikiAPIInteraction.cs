@@ -53,10 +53,10 @@ public class WikiAPIInteraction : JsonInteraction, IHasAuthorizationInfo
     {
         result = default!;
 
-        if (Request.InputStream == Stream.Null)
+        if (Request.BodyStream == Stream.Null)
             return false;
 
-        var body = new StreamReader(Request.InputStream).ReadToEnd();
+        var body = new StreamReader(Request.BodyStream).ReadToEnd();
 
         try
         {
