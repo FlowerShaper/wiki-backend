@@ -119,7 +119,6 @@ public class MarkdownProcessor
             {
                 Title = title,
                 Description = metadata.GetValueOrDefault("description", "No description provided."),
-                Author = metadata.GetValueOrDefault("author", "Unknown"),
                 Image = metadata.GetValueOrDefault("image", ""),
                 Layout = metadata.GetValueOrDefault("layout", "article"),
                 Type = metadata.GetValueOrDefault("type", "article") switch

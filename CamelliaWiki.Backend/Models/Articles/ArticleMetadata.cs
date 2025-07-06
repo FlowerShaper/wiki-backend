@@ -14,10 +14,6 @@ public class ArticleMetadata
     [JsonProperty("description")]
     public string Description { get; set; } = "";
 
-    [BsonElement("author")]
-    [JsonProperty("author")]
-    public string Author { get; set; } = "";
-
     [BsonElement("image")]
     [JsonProperty("image")]
     public string Image { get; set; } = "";
