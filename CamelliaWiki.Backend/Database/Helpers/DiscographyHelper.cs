@@ -11,6 +11,8 @@ public static class DiscographyHelper
     public static List<DiscographyTrack> AllTracks => tracks.Find(_ => true).ToList();
     public static List<DiscographyAlbum> AllAlbums => albums.Find(_ => true).ToList();
 
+    public static List<IDiscographySearchable> Searchable => AllAlbums.Cast<IDiscographySearchable>().Concat(AllTracks).ToList();
+
     public static void AddTrack(DiscographyTrack track) => tracks.InsertOne(track);
     public static void AddAlbum(DiscographyAlbum album) => albums.InsertOne(album);
 

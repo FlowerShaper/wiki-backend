@@ -1,6 +1,7 @@
 ﻿using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Database.Helpers;
 using CamelliaWiki.Backend.Models.Articles;
+using CamelliaWiki.Backend.Models.Discography;
 using CamelliaWiki.Backend.Utils;
 using Midori.Networking;
 using Midori.Searching;
@@ -20,10 +21,34 @@ public class SearchRoute : IWikiAPIRoute
             return;
         }
 
+        // searching in midori is current case-sensitive for some reason
+        // really needs to be fixed someday
+        query = query.ToLowerInvariant();
+
         LanguageUtils.TryParse(interaction.GetStringQuery("lang"), out var language);
 
-        var filter = new SearchFilter<Article>(query);
-        var articles = filter.Filter(ArticleHelper.GetAllUniqueArticles(language));
+        var articleFilter = new SearchFilter<Article>(query);
+        var articles = articleFilter.Filter(ArticleHelper.GetAllUniqueArticles(language));
+
+        var discFilter = new SearchFilter<IDiscographySearchable>(query);
+        var discography = discFilter.Filter(DiscographyHelper.Searchable);
+
+        foreach (var searchable in discography)
+        {
+            var track = searchable is DiscographyTrack;
+
+            articles.Add(new Article
+            {
+                ID = $"/discography/{(track ? "tracks" : "albums")}/{searchable.ID}:en",
+                Metadata = new ArticleMetadata
+                {
+                    Title = searchable.Title,
+                    Description = track ? "Track" : "Album",
+                    Image = searchable.ImageUrl ?? string.Empty
+                }
+            });
+        }
+
         await interaction.Reply(HttpStatusCode.OK, articles);
     }
 }

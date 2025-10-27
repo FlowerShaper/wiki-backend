@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.Models.Discography;
 
-public class DiscographyAlbum
+public class DiscographyAlbum : IDiscographySearchable
 {
     [BsonId]
     public string ID { get; set; } = string.Empty;
@@ -73,4 +73,8 @@ public class DiscographyAlbum
         credits = Credits,
         links = Links
     };
+
+    string? IDiscographySearchable.ImageUrl => Covers.FirstOrDefault()?.Url;
+    string IDiscographySearchable.SearchableTitle => Title.ToLowerInvariant();
+    string IDiscographySearchable.SearchableTitleRomanized => TitleRomanized.ToLowerInvariant();
 }
