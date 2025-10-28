@@ -6,12 +6,15 @@ namespace CamelliaWiki.Backend.API.Routes.Users;
 
 public class UserRoute : IWikiAPIRoute
 {
-    public string RoutePath => "/users/:id";
+    public string RoutePath => "/users/:i";
     public HttpMethod Method => HttpMethod.Get;
 
     public async Task Handle(WikiAPIInteraction interaction)
     {
-        if (!interaction.TryGetULongParameter("id", out var id))
+        // its currently just 'i' instead of "id" because midori doesn't
+        // sort routes properly and will always prefer :id before @me
+        // it's also length sorted
+        if (!interaction.TryGetULongParameter("i", out var id))
             return;
 
         var user = UserHelper.Get(id);

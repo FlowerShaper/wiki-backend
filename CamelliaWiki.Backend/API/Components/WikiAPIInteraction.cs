@@ -14,8 +14,6 @@ public class WikiAPIInteraction : JsonInteraction, IHasAuthorizationInfo
     protected override string[] AllowedHeaders => base.AllowedHeaders.Concat(extra_headers).ToArray();
     private static readonly string[] extra_headers = { "baggage", "sentry-trace" };
 
-    protected override bool RespondOnInvalidParameter => false;
-
     public bool IsAuthorized => UserID != 0;
     public string AuthorizationError { get; private set; } = null!;
 
