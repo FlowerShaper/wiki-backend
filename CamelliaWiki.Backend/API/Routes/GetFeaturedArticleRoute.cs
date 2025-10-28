@@ -16,7 +16,7 @@ public class GetFeaturedArticleRoute : IWikiAPIRoute
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "");
             return;
         }
 
@@ -24,7 +24,7 @@ public class GetFeaturedArticleRoute : IWikiAPIRoute
 
         if (article is null)
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "");
             return;
         }
 

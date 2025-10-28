@@ -1,6 +1,6 @@
 ﻿using System.Net;
-using System.Reflection;
 using CamelliaWiki.Backend.API.Components;
+using CamelliaWiki.Backend.API.Routes.Error;
 using CamelliaWiki.Backend.Bot;
 using CamelliaWiki.Backend.Components;
 using CamelliaWiki.Backend.Database;
@@ -37,8 +37,13 @@ public static class Program
         ViewManager = new ViewManager();
         Visitors = new VisitorManager();
 
-        var server = new HttpServer();
-        server.MapModule<APIServer<WikiAPIInteraction>>("/", m => m.AddRoutesFromAssembly<IWikiAPIRoute>(Assembly.GetExecutingAssembly()));
+        var server = new HttpServer
+        {
+            NotFoundModule = new APIRouteModule<WikiAPIInteraction, NotFoundRoute>(),
+            MethodNotAllowedModule = new APIRouteModule<WikiAPIInteraction, MethodNotAllowedRoute>()
+        };
+
+        server.RegisterAPI<WikiAPIInteraction, IWikiAPIRoute>(typeof(Program).Assembly);
         server.Start(IPAddress.Any, 1984);
 
         await Task.Delay(-1);

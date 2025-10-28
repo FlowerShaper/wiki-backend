@@ -16,13 +16,13 @@ public class UpdateDynamicsRoute : IWikiAPIRoute, INeedsAuthorization
     {
         if (!interaction.User.IsStaff)
         {
-            await interaction.ReplyError(HttpStatusCode.Forbidden, "no.");
+            await interaction.ReplyMessage(HttpStatusCode.Forbidden, "no.");
             return;
         }
 
         if (!interaction.TryParseBody<Payload>(out var payload))
         {
-            await interaction.ReplyError(HttpStatusCode.BadRequest, "body is not valid json");
+            await interaction.ReplyMessage(HttpStatusCode.BadRequest, "body is not valid json");
             return;
         }
 
@@ -41,9 +41,9 @@ public class UpdateDynamicsRoute : IWikiAPIRoute, INeedsAuthorization
         }
 
         if (updatedAnything)
-            await interaction.ReplyError(HttpStatusCode.OK, "okge");
+            await interaction.ReplyMessage(HttpStatusCode.OK, "okge");
         else
-            await interaction.ReplyError(HttpStatusCode.NotModified, "nothing changed.");
+            await interaction.ReplyMessage(HttpStatusCode.NotModified, "nothing changed.");
     }
 
     private class Payload

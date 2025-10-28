@@ -19,19 +19,19 @@ public class PatchCommentRoute : IWikiAPIRoute, INeedsAuthorization
 
         if (string.IsNullOrEmpty(content) || string.IsNullOrWhiteSpace(content))
         {
-            await interaction.ReplyError(HttpStatusCode.BadRequest, "");
+            await interaction.ReplyMessage(HttpStatusCode.BadRequest, "");
             return;
         }
 
         if (!CommentHelper.TryGetComment(id, out var comment))
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "");
             return;
         }
 
         if (comment.AuthorID != interaction.UserID)
         {
-            await interaction.ReplyError(HttpStatusCode.Unauthorized, "");
+            await interaction.ReplyMessage(HttpStatusCode.Unauthorized, "");
             return;
         }
 

@@ -4,7 +4,6 @@ using MongoDB.Driver;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using Midori.Logging;
-using Midori.Utils;
 
 namespace CamelliaWiki.Backend.Database.Helpers;
 
@@ -59,9 +58,6 @@ public static class UserHelper
             IsStaff = user.Permissions.HasPermission(Permissions.ModerateMembers)
         };
         // ReSharper enable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-
-        Logger.Log($"wah {user.BannerHash}");
-        Logger.Log(u.Serialize());
 
         if (cached == null)
             users.InsertOne(u);

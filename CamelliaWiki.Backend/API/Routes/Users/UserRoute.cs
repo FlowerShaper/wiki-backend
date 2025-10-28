@@ -18,7 +18,7 @@ public class UserRoute : IWikiAPIRoute
 
         if (user is null)
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "No user with the provided ID has been found.");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "No user with the provided ID has been found.");
             return;
         }
 

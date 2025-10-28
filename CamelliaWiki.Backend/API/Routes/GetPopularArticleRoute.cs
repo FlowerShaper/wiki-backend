@@ -40,7 +40,7 @@ public class GetPopularArticleRoute : IWikiAPIRoute
 
         if (highest is null)
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "");
             return;
         }
 
@@ -48,7 +48,7 @@ public class GetPopularArticleRoute : IWikiAPIRoute
 
         if (article is null)
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "");
             return;
         }
 

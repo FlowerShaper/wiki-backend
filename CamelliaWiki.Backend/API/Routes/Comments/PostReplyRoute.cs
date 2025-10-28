@@ -19,13 +19,13 @@ public class PostReplyRoute : IWikiAPIRoute, INeedsAuthorization
 
         if (string.IsNullOrEmpty(content) || string.IsNullOrWhiteSpace(content))
         {
-            await interaction.ReplyError(HttpStatusCode.BadRequest, "");
+            await interaction.ReplyMessage(HttpStatusCode.BadRequest, "");
             return;
         }
 
         if (!CommentHelper.TryGetComment(id, out var comment))
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "");
             return;
         }
 

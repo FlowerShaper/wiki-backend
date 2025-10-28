@@ -17,7 +17,7 @@ public class PostCommentVoteRoute : IWikiAPIRoute, INeedsAuthorization
 
         if (!CommentHelper.TryGetComment(id, out var comment))
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "");
             return;
         }
 
@@ -25,7 +25,7 @@ public class PostCommentVoteRoute : IWikiAPIRoute, INeedsAuthorization
 
         if (!int.TryParse(vote, out var voteValue))
         {
-            await interaction.ReplyError(HttpStatusCode.BadRequest, "");
+            await interaction.ReplyMessage(HttpStatusCode.BadRequest, "");
             return;
         }
 

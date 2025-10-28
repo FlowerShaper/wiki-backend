@@ -15,30 +15,30 @@ public class AddAliasRoute : IWikiAPIRoute, INeedsAuthorization
     {
         if (!interaction.User.IsStaff)
         {
-            await interaction.ReplyError(HttpStatusCode.Forbidden, "no.");
+            await interaction.ReplyMessage(HttpStatusCode.Forbidden, "no.");
             return;
         }
 
         if (!interaction.TryParseBody<Payload>(out var payload))
         {
-            await interaction.ReplyError(HttpStatusCode.BadRequest, "body is not valid json");
+            await interaction.ReplyMessage(HttpStatusCode.BadRequest, "body is not valid json");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(payload.Alias) || string.IsNullOrWhiteSpace(payload.Article))
         {
-            await interaction.ReplyError(HttpStatusCode.BadRequest, "alias or article empty");
+            await interaction.ReplyMessage(HttpStatusCode.BadRequest, "alias or article empty");
             return;
         }
 
         if (ArticleHelper.TryGetAlias(payload.Alias, out _))
         {
-            await interaction.ReplyError(HttpStatusCode.BadRequest, "already exists");
+            await interaction.ReplyMessage(HttpStatusCode.BadRequest, "already exists");
             return;
         }
 
         ArticleHelper.AddAlias(payload.Alias, payload.Article);
-        await interaction.ReplyError(HttpStatusCode.Created, "ogke");
+        await interaction.ReplyMessage(HttpStatusCode.Created, "ogke");
     }
 
     private class Payload

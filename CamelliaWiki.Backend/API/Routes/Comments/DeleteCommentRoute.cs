@@ -17,13 +17,13 @@ public class DeleteCommentRoute : IWikiAPIRoute, INeedsAuthorization
 
         if (!CommentHelper.TryGetComment(id, out var comment))
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "");
             return;
         }
 
         if (comment.AuthorID != interaction.UserID && !UserHelper.IsStaff(interaction.UserID))
         {
-            await interaction.ReplyError(HttpStatusCode.Unauthorized, "");
+            await interaction.ReplyMessage(HttpStatusCode.Unauthorized, "");
             return;
         }
 

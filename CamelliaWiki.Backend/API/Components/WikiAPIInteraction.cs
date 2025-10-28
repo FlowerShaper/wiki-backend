@@ -14,6 +14,8 @@ public class WikiAPIInteraction : JsonInteraction, IHasAuthorizationInfo
     protected override string[] AllowedHeaders => base.AllowedHeaders.Concat(extra_headers).ToArray();
     private static readonly string[] extra_headers = { "baggage", "sentry-trace" };
 
+    protected override bool RespondOnInvalidParameter => false;
+
     public bool IsAuthorized => UserID != 0;
     public string AuthorizationError { get; private set; } = null!;
 
@@ -75,7 +77,7 @@ public class WikiAPIInteraction : JsonInteraction, IHasAuthorizationInfo
             return true;
 
         if (RespondOnInvalidParameter)
-            ReplyError(HttpStatusCode.BadRequest, DefaultResponseStrings.InvalidParameter(name, "ulong")).Wait();
+            ReplyMessage(HttpStatusCode.BadRequest, DefaultResponseStrings.InvalidParameter(name, "ulong")).Wait();
 
         value = 0L;
         return false;

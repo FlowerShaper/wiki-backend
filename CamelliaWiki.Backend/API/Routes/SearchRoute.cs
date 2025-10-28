@@ -17,7 +17,7 @@ public class SearchRoute : IWikiAPIRoute
     {
         if (!interaction.TryGetStringQuery("query", out var query))
         {
-            await interaction.ReplyError(HttpStatusCode.BadRequest, "Please provide a search query.");
+            await interaction.ReplyMessage(HttpStatusCode.BadRequest, "Please provide a search query.");
             return;
         }
 

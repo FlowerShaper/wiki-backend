@@ -18,7 +18,7 @@ public class GetTrackRoute : IWikiAPIRoute
 
         if (track is null)
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "Could not find the specified track.");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "Could not find the specified track.");
             return;
         }
 

@@ -19,7 +19,7 @@ public class PostCommentRoute : IWikiAPIRoute, INeedsAuthorization
 
         if (string.IsNullOrEmpty(content) || string.IsNullOrWhiteSpace(content))
         {
-            await interaction.ReplyError(HttpStatusCode.BadRequest, "");
+            await interaction.ReplyMessage(HttpStatusCode.BadRequest, "");
             return;
         }
 

@@ -18,7 +18,7 @@ public class GetAlbumRoute : IWikiAPIRoute
 
         if (album is null)
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "Could not find the specified album.");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "Could not find the specified album.");
             return;
         }
 

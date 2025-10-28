@@ -21,7 +21,7 @@ public class GetArticleRoute : IWikiAPIRoute
 
         if (article is null)
         {
-            await interaction.ReplyError(HttpStatusCode.NotFound, "Could not find the specified article.");
+            await interaction.ReplyMessage(HttpStatusCode.NotFound, "Could not find the specified article.");
             return;
         }
 
