@@ -23,7 +23,7 @@ public class DiscographyAlbum : IDiscographySearchable
 
     [BsonElement("release")]
     [JsonProperty("release")]
-    public DiscographyRelease Release { get; set; } = null!;
+    public DiscographyRelease Release { get; set; } = new();
 
     [BsonElement("covers")]
     [JsonProperty("covers")]

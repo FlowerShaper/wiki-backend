@@ -4,9 +4,9 @@ using Midori.Networking;
 
 namespace CamelliaWiki.Backend.API.Routes.Discography;
 
-public class AllAlbumsRoute : IWikiAPIRoute
+public class GetDiscographyRoute : IWikiAPIRoute
 {
-    public string RoutePath => "/discography/albums";
+    public string RoutePath => "/discography";
     public HttpMethod Method => HttpMethod.Get;
 
     public async Task Handle(WikiAPIInteraction interaction)
@@ -17,6 +17,10 @@ public class AllAlbumsRoute : IWikiAPIRoute
         foreach (var album in albums)
             tracks.RemoveAll(t => album.Discs.Any(d => d.Tracks.Contains(t.ID)));
 
-        await interaction.Reply(HttpStatusCode.OK, albums.Select(x => x.ToAPI()));
+        await interaction.Reply(HttpStatusCode.OK, new
+        {
+            albums = albums.OrderBy(x => x.Release).Select(x => x.ToAPI()),
+            tracks = tracks.OrderBy(x => x.Release).Select(x => x.ToAPI())
+        });
     }
 }
