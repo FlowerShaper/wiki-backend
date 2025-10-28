@@ -15,7 +15,7 @@ public class GetDiscographyRoute : IWikiAPIRoute
         var tracks = DiscographyHelper.AllTracks;
 
         foreach (var album in albums)
-            tracks.RemoveAll(t => album.Discs.Any(d => d.Tracks.Contains(t.ID)));
+            tracks.RemoveAll(t => !t.Single && album.Discs.Any(d => d.Tracks.Contains(t.ID)));
 
         await interaction.Reply(HttpStatusCode.OK, new
         {

@@ -30,6 +30,10 @@ public class DiscographyTrack : IDiscographySearchable
     [JsonProperty("bpm")]
     public string BPM { get; set; } = string.Empty;
 
+    [BsonElement("single")]
+    [JsonProperty("single")]
+    public bool Single { get; set; }
+
     [BsonElement("release")]
     [JsonProperty("release")]
     public DiscographyRelease Release { get; set; } = null!;
