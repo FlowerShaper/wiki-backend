@@ -14,7 +14,9 @@ public class GetPostCommentsRoute : IWikiAPIRoute
         if (!interaction.TryGetStringParameter("slug", out var slug))
             return;
 
-        var comments = CommentHelper.GetPostComments(slug, interaction.UserID);
+        var comments = CommentHelper.GetPostComments(slug, interaction.UserID)
+                                    .OrderByDescending(x => x.Timestamp).ToList();
+
         await interaction.Reply(HttpStatusCode.OK, comments);
     }
 }

@@ -73,6 +73,9 @@ public class DataProcessor
         var folderPath = Path.GetDirectoryName(file)!.Replace(dataDirectory, "");
         folderPath = folderPath.Replace(Path.DirectorySeparatorChar, '/');
 
+        if (folderPath.StartsWith("/_data"))
+            return;
+
         var name = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
 
         if (!LanguageUtils.TryParse(name, out var lang))
@@ -245,6 +248,12 @@ public class DataProcessor
             return;
         }
 
+        var md = Path.ChangeExtension(file, "md");
+        if (File.Exists(md)) album.Content = File.ReadAllText(md);
+
+        if (string.IsNullOrWhiteSpace(album.Content))
+            album.Content = "> TODO: Add content.\n{: .caution }";
+
         album.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
         DiscographyHelper.AddAlbum(album);
 
@@ -262,6 +271,12 @@ public class DataProcessor
             logger.Add($"Failed to deserialize track data from '{file}'!", LogLevel.Error);
             return;
         }
+
+        var md = Path.ChangeExtension(file, "md");
+        if (File.Exists(md)) track.Content = File.ReadAllText(md);
+
+        if (string.IsNullOrWhiteSpace(track.Content))
+            track.Content = "> TODO: Add content.\n{: .caution }";
 
         track.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
         DiscographyHelper.AddTrack(track);
