@@ -252,7 +252,7 @@ public class DataProcessor
         if (File.Exists(md)) album.Content = File.ReadAllText(md);
 
         if (string.IsNullOrWhiteSpace(album.Content))
-            album.Content = "> TODO: Add content.\n{: .caution }";
+            album.Content = "> [!NOTE]\n> TODO: Add content.";
 
         album.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
         DiscographyHelper.AddAlbum(album);
@@ -276,7 +276,7 @@ public class DataProcessor
         if (File.Exists(md)) track.Content = File.ReadAllText(md);
 
         if (string.IsNullOrWhiteSpace(track.Content))
-            track.Content = "> TODO: Add content.\n{: .caution }";
+            track.Content = "> [!NOTE]\n> TODO: Add content.";
 
         track.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
         DiscographyHelper.AddTrack(track);
