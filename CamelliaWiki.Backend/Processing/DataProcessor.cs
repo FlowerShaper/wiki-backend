@@ -7,6 +7,7 @@ using CamelliaWiki.Backend.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Midori.Logging;
+using Midori.Utils;
 
 namespace CamelliaWiki.Backend.Processing;
 
