@@ -4,11 +4,11 @@ namespace CamelliaWiki.Backend.Utils;
 
 public static class LanguageUtils
 {
-    public static bool TryParse(string? lang, out Language language)
+    public static bool TryParse(string? lang, out ArticleLanguage language)
     {
         if (lang == null)
         {
-            language = Language.en;
+            language = ArticleLanguage.en;
             return true;
         }
 

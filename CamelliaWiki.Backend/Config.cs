@@ -7,6 +7,9 @@ public class Config
     [JsonProperty("token")]
     public string Token { get; set; } = "";
 
+    [JsonProperty("pgsql")]
+    public string PostgresConnection { get; set; } = "";
+
     [JsonProperty("mongo")]
     public string MongoStr { get; set; } = "mongodb://localhost:27017";
 

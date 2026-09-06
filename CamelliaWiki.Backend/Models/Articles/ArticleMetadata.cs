@@ -1,34 +1,41 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.Models.Articles;
 
+[Table("article-meta")]
+[PrimaryKey(nameof(ID), nameof(Language))]
 [JsonObject(MemberSerialization.OptIn)]
 public class ArticleMetadata
 {
-    [BsonElement("title")]
-    [JsonProperty("title")]
-    public string Title { get; set; } = "";
+    [Key, Column("id"), Required, MaxLength(256)]
+    public string ID { get; init; } = string.Empty;
 
-    [BsonElement("description")]
-    [JsonProperty("description")]
-    public string Description { get; set; } = "";
+    [Key, Column("lang"), Required]
+    public ArticleLanguage Language { get; init; } = ArticleLanguage.en;
 
-    [BsonElement("image")]
-    [JsonProperty("image")]
-    public string Image { get; set; } = "";
+    [Column("title"), JsonProperty("title")]
+    public string Title { get; set; } = string.Empty;
 
-    [BsonElement("layout")]
-    [JsonProperty("layout")]
-    public string Layout { get; set; } = "";
+    [Column("description"), JsonProperty("description")]
+    public string Description { get; set; } = string.Empty;
 
-    [BsonElement("type")]
-    [JsonProperty("type")]
+    [Column("image"), JsonProperty("image")]
+    public string Image { get; set; } = string.Empty;
+
+    [Column("layout"), JsonProperty("layout")]
+    public string Layout { get; set; } = string.Empty;
+
+    [Column("type"), JsonProperty("type")]
     public ArticleType Type { get; set; } = ArticleType.Article;
 
-    [BsonElement("date")]
-    [JsonProperty("date")]
-    public long Date { get; set; } = 0;
+    [Column("date"), JsonProperty("date")]
+    public long? Date { get; set; }
+
+    [ForeignKey($"{nameof(ID)},{nameof(Language)}"), DeleteBehavior(DeleteBehavior.Cascade)]
+    public Article Article { get; init; } = null!;
 }
 
 public enum ArticleType

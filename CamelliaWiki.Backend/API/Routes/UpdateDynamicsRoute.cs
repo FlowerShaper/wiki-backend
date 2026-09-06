@@ -1,4 +1,5 @@
-﻿using CamelliaWiki.Backend.API.Components;
+﻿/*
+using CamelliaWiki.Backend.API.Components;
 using CamelliaWiki.Backend.Database.Helpers;
 using CamelliaWiki.Backend.Models;
 using Midori.API.Components.Interfaces;
@@ -55,3 +56,4 @@ public class UpdateDynamicsRoute : IWikiAPIRoute, INeedsAuthorization
         public string HomeArticles { get; set; } = null!;
     }
 }
+*/

@@ -1,15 +1,17 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.Models.Discography;
 
+[Owned]
 public class DiscographyCredit
 {
-    [BsonElement("role")]
+    [Column("role")]
     [JsonProperty("role")]
     public string Role { get; set; } = string.Empty;
 
-    [BsonElement("name")]
+    [Column("name")]
     [JsonProperty("name")]
     public string Name { get; set; } = string.Empty;
 }

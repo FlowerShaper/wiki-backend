@@ -1,47 +1,49 @@
-﻿using CamelliaWiki.Backend.Database.Helpers;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using CamelliaWiki.Backend.Database;
 using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.Models.Discography;
 
 public class DiscographyAlbum : IDiscographySearchable
 {
-    [BsonId]
+    [Key, Column("id"), Required, MaxLength(256)]
     public string ID { get; set; } = string.Empty;
 
-    [BsonElement("title")]
+    [Column("title"), Required, MaxLength(256)]
     [JsonProperty("title")]
     public string Title { get; set; } = string.Empty;
 
-    [BsonElement("title_romanized")]
+    [Column("title_romanized"), MaxLength(256)]
     [JsonProperty("title_romanized")]
     public string TitleRomanized { get; set; } = string.Empty;
 
-    [BsonElement("content")]
+    [Column("content")]
     [JsonProperty("content")]
+    // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string Content { get; set; } = string.Empty;
 
-    [BsonElement("release")]
+    [Column("release")]
     [JsonProperty("release")]
     public DiscographyRelease Release { get; set; } = new();
 
-    [BsonElement("covers")]
+    [Column("covers")]
     [JsonProperty("covers")]
-    public DiscographyCover[] Covers { get; set; } = Array.Empty<DiscographyCover>();
+    public ICollection<DiscographyCover> Covers { get; set; } = [];
 
-    [BsonElement("discs")]
+    [Column("discs")]
     [JsonProperty("discs")]
-    public DiscographyDisc[] Discs { get; set; } = Array.Empty<DiscographyDisc>();
+    public ICollection<DiscographyDisc> Discs { get; set; } = [];
 
-    [BsonElement("credits")]
+    [Column("credits")]
     [JsonProperty("credits")]
-    public DiscographyCredit[] Credits { get; set; } = Array.Empty<DiscographyCredit>();
+    public ICollection<DiscographyCredit> Credits { get; set; } = [];
 
-    [BsonElement("links")]
+    [Column("links")]
     [JsonProperty("links")]
-    public DiscographyLink[] Links { get; set; } = Array.Empty<DiscographyLink>();
+    public ICollection<DiscographyLink> Links { get; set; } = [];
 
-    public object ToAPI() => new
+    public object ToAPI(DatabaseContext database) => new
     {
         id = ID,
         title = Title,
@@ -53,7 +55,7 @@ public class DiscographyAlbum : IDiscographySearchable
             name = d.Name,
             tracks = d.Tracks.Select<string, object>(x =>
             {
-                var track = DiscographyHelper.GetTrack(x);
+                var track = database.Tracks.Find(x);
 
                 if (track is not null)
                 {

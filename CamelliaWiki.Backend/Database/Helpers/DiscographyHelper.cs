@@ -1,11 +1,10 @@
 ﻿using CamelliaWiki.Backend.Models.Discography;
-using MongoDB.Driver;
 
 namespace CamelliaWiki.Backend.Database.Helpers;
 
 public static class DiscographyHelper
 {
-    private static IMongoCollection<DiscographyTrack> tracks => MongoDatabase.GetCollection<DiscographyTrack>("dcg-tracks");
+    /*private static IMongoCollection<DiscographyTrack> tracks => MongoDatabase.GetCollection<DiscographyTrack>("dcg-tracks");
     private static IMongoCollection<DiscographyAlbum> albums => MongoDatabase.GetCollection<DiscographyAlbum>("dcg-albums");
 
     public static List<DiscographyTrack> AllTracks => tracks.Find(_ => true).ToList();
@@ -14,14 +13,14 @@ public static class DiscographyHelper
     public static List<IDiscographySearchable> Searchable => AllAlbums.Cast<IDiscographySearchable>().Concat(AllTracks).ToList();
 
     public static void AddTrack(DiscographyTrack track) => tracks.InsertOne(track);
-    public static void AddAlbum(DiscographyAlbum album) => albums.InsertOne(album);
+    public static void AddAlbum(DiscographyAlbum album) => albums.InsertOne(album);*/
 
-    public static DiscographyTrack? GetTrack(string id) => tracks.Find(t => t.ID == id).FirstOrDefault();
-    public static DiscographyAlbum? GetAlbum(string id) => albums.Find(a => a.ID == id).FirstOrDefault();
+    public static DiscographyTrack? GetTrack(string id) => null /*tracks.Find(t => t.ID == id).FirstOrDefault()*/;
+    public static DiscographyAlbum? GetAlbum(string id) => null /*albums.Find(a => a.ID == id).FirstOrDefault()*/;
 
-    public static void Wipe()
+    /*public static void Wipe()
     {
         tracks.DeleteMany(_ => true);
         albums.DeleteMany(_ => true);
-    }
+    }*/
 }
