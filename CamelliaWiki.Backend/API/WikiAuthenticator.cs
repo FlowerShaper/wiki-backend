@@ -34,8 +34,10 @@ public class WikiAuthenticator : IAPIAuthenticator
         var user = database.GetUser(id);
         if (user == null) return false;
 
-        if (user.IsStaff)
-            scopes.Add(Scopes.STAFF);
+        var adm = user.IsAdmin;
+
+        if (user.IsStaff || adm) scopes.Add(Scopes.STAFF);
+        if (adm) scopes.Add(Scopes.ADMIN);
 
         data["auth"] = user;
         return true;

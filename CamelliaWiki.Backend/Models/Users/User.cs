@@ -58,6 +58,10 @@ public class User
     [JsonProperty("staff")]
     public bool IsStaff { get; set; } = false;
 
+    [NotMapped]
+    [JsonProperty("admin")]
+    public bool IsAdmin => Program.Config.AdminIDs.Contains(ID);
+
     [Column("join")]
     [JsonProperty("join")]
     public long JoinDate { get; set; } = 0;
