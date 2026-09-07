@@ -24,10 +24,15 @@ public static class Program
 
     public static async Task Main(string[] args)
     {
-        if (!File.Exists("config.json"))
-            throw new Exception("Config file not found!");
+        Logger.SaveToFiles = false;
 
-        Config = JsonConvert.DeserializeObject<Config>(await File.ReadAllTextAsync("config.json"))!;
+        if (!File.Exists("config.json"))
+        {
+            Logger.Log("!!! CONFIG FILE NOT FOUND !!!", LoggingTarget.General, LogLevel.Warning);
+            Config = new Config();
+        }
+        else
+            Config = JsonConvert.DeserializeObject<Config>(await File.ReadAllTextAsync("config.json"))!;
 
         var builder = new HostApplicationBuilder();
 
@@ -61,11 +66,22 @@ public static class Program
 
         var host = builder.Build();
 
-        if (args.Contains("--md"))
+        using (var scope = host.Services.CreateScope())
         {
-            var process = ActivatorUtilities.CreateInstance<DataProcessor>(host.Services.CreateScope().ServiceProvider);
-            process.Start(Config.DataDirectory);
-            return;
+            if (builder.Environment.IsProduction())
+            {
+                // this should be fine to do at runtime since there
+                // are no multiple instances accessing the db at once
+                var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+                await db.Database.MigrateAsync();
+            }
+
+            if (args.Contains("--md"))
+            {
+                var process = ActivatorUtilities.CreateInstance<DataProcessor>(scope.ServiceProvider);
+                process.Start(Config.DataDirectory);
+                return;
+            }
         }
 
         var router = host.Services.GetRequiredService<HttpRouter>();

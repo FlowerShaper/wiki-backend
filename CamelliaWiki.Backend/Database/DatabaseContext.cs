@@ -24,8 +24,6 @@ public class DatabaseContext : DbContext
     public DatabaseContext(DbContextOptions<DatabaseContext> opt)
         : base(opt)
     {
-        Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
-
         Articles = Set<Article>();
         ArticleMeta = Set<ArticleMetadata>();
         Aliases = Set<ArticleAlias>();
