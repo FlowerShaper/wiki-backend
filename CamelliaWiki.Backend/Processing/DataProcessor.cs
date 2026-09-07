@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using CamelliaWiki.Backend.Database;
 using CamelliaWiki.Backend.Models.Articles;
+using CamelliaWiki.Backend.Models.Characters;
 using CamelliaWiki.Backend.Models.Discography;
 using CamelliaWiki.Backend.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ public class DataProcessor
 
     private readonly List<Article> articles = [];
     private readonly List<ArticleMetadata> articleMeta = [];
+    private readonly List<Character> characters = [];
     private readonly List<DiscographyAlbum> albums = [];
     private readonly List<DiscographyTrack> tracks = [];
 
@@ -42,6 +44,7 @@ public class DataProcessor
         // remove old data
         database.Articles.ExecuteDelete();
         database.ArticleMeta.ExecuteDelete();
+        database.Characters.ExecuteDelete();
         database.Albums.ExecuteDelete();
         database.Tracks.ExecuteDelete();
 
@@ -51,6 +54,7 @@ public class DataProcessor
 
             database.Articles.AddRange(articles);
             database.ArticleMeta.AddRange(articleMeta);
+            database.Characters.AddRange(characters);
             database.Albums.AddRange(albums);
             database.Tracks.AddRange(tracks);
         }
@@ -211,6 +215,8 @@ public class DataProcessor
                 processAlbumData(file);
             else if (relative.StartsWith("/_data/tracks"))
                 processTrackData(file);
+            else if (relative.StartsWith("/_data/characters"))
+                processCharacterData(file);
             else
                 logger.Add($"Unsure how to process data file: {relative}", LogLevel.Warning);
         }
@@ -262,6 +268,30 @@ public class DataProcessor
         tracks.Add(track);
 
         logger.Add($"    Title: {track.Title} ({track.ID})");
+    }
+
+    private void processCharacterData(string file)
+    {
+        logger.Add($"Processing character {file}");
+        var json = File.ReadAllText(file);
+        var chr = json.Deserialize<Character>();
+
+        if (chr == null)
+        {
+            logger.Add($"Failed to deserialize character data from '{file}'!", LogLevel.Error);
+            return;
+        }
+
+        var md = Path.ChangeExtension(file, "md");
+        if (File.Exists(md)) chr.Content = File.ReadAllText(md);
+
+        if (string.IsNullOrWhiteSpace(chr.Content))
+            chr.Content = "> [!NOTE]\n> TODO: Add content.";
+
+        chr.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
+        characters.Add(chr);
+
+        logger.Add($"    Name: {chr.Name} ({chr.ID})");
     }
 
     #endregion

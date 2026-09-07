@@ -1,5 +1,6 @@
 using CamelliaWiki.Backend.Models;
 using CamelliaWiki.Backend.Models.Articles;
+using CamelliaWiki.Backend.Models.Characters;
 using CamelliaWiki.Backend.Models.Comments;
 using CamelliaWiki.Backend.Models.Discography;
 using CamelliaWiki.Backend.Models.Users;
@@ -13,6 +14,7 @@ public class DatabaseContext : DbContext
     public DbSet<Article> Articles { get; }
     public DbSet<ArticleMetadata> ArticleMeta { get; }
     public DbSet<ArticleAlias> Aliases { get; }
+    public DbSet<Character> Characters { get; }
     public DbSet<Comment> Comments { get; }
     public DbSet<DiscographyAlbum> Albums { get; }
     public DbSet<DiscographyTrack> Tracks { get; }
@@ -27,6 +29,7 @@ public class DatabaseContext : DbContext
         Articles = Set<Article>();
         ArticleMeta = Set<ArticleMetadata>();
         Aliases = Set<ArticleAlias>();
+        Characters = Set<Character>();
         Comments = Set<Comment>();
         Albums = Set<DiscographyAlbum>();
         Tracks = Set<DiscographyTrack>();
@@ -43,6 +46,16 @@ public class DatabaseContext : DbContext
 
         build.Entity<ArticleMetadata>()
              .Property(x => x.Language).HasConversion<string>();
+
+        build.Entity<Character>(b =>
+        {
+            b.ToTable("character");
+            b.OwnsMany(c => c.Images, o =>
+            {
+                o.WithOwner().HasForeignKey("character");
+                o.ToTable("character-image");
+            });
+        });
 
         build.Entity<DiscographyAlbum>(b =>
         {
