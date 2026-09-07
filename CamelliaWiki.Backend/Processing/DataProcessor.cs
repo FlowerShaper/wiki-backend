@@ -1,10 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
-using CamelliaWiki.Backend.Database.Helpers;
+using CamelliaWiki.Backend.Database;
 using CamelliaWiki.Backend.Models.Articles;
+using CamelliaWiki.Backend.Models.Characters;
 using CamelliaWiki.Backend.Models.Discography;
 using CamelliaWiki.Backend.Utils;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Midori.Logging;
+using Midori.Utils;
 
 namespace CamelliaWiki.Backend.Processing;
 
@@ -13,31 +17,47 @@ public class DataProcessor
     private static readonly Regex metadata_regex = new(@"^---([\s\S]*?)---", RegexOptions.Multiline);
     private static Logger logger { get; } = Logger.GetLogger("MarkdownProcessor");
 
-    private string dataDirectory { get; }
+    private readonly DatabaseContext database;
+    private string dataDirectory = string.Empty;
 
-    private DataProcessor(string dataDirectory)
+    private readonly List<Article> articles = [];
+    private readonly List<ArticleMetadata> articleMeta = [];
+    private readonly List<Character> characters = [];
+    private readonly List<DiscographyAlbum> albums = [];
+    private readonly List<DiscographyTrack> tracks = [];
+
+    public DataProcessor(DatabaseContext database)
     {
-        this.dataDirectory = dataDirectory.Replace('/', Path.DirectorySeparatorChar);
+        this.database = database;
     }
 
-    public static void Run(string path)
+    public void Start(string path)
     {
-        if (!Directory.Exists(path))
-            return;
-
-        var runner = new DataProcessor(path);
-        runner.Start();
-    }
-
-    public void Start()
-    {
-        ArticleHelper.Wipe();
-        DiscographyHelper.Wipe();
+        dataDirectory = path.Replace('/', Path.DirectorySeparatorChar);
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        processFolder(dataDirectory);
+        // database.Database.EnsureDeleted();
+        database.Database.EnsureCreated();
+
+        // remove old data
+        database.Articles.ExecuteDelete();
+        database.ArticleMeta.ExecuteDelete();
+        database.Characters.ExecuteDelete();
+        database.Albums.ExecuteDelete();
+        database.Tracks.ExecuteDelete();
+
+        using (database.EditAndSave())
+        {
+            processFolder(dataDirectory);
+
+            database.Articles.AddRange(articles);
+            database.ArticleMeta.AddRange(articleMeta);
+            database.Characters.AddRange(characters);
+            database.Albums.AddRange(albums);
+            database.Tracks.AddRange(tracks);
+        }
 
         stopwatch.Stop();
 
@@ -85,70 +105,34 @@ public class DataProcessor
 
         var md = File.ReadAllText(file);
         var metadata = extractMetadata(md);
-        var content = extractContent(md);
-
-        var breadCrumbs = new List<Breadcrumb>();
-
-        var pathSplit = folderPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-
-        var title = metadata.GetValueOrDefault("title", pathSplit.Last().FormatToTitle());
-
-        if (pathSplit.Length > 1)
-        {
-            // reconstruct the path every path
-            // so that /a/b/c/d
-            // becomes /a /a/b /a/b/c /a/b/c/d
-
-            var currentPath = "";
-
-            foreach (var path in pathSplit)
-            {
-                if (path == pathSplit.Last())
-                    break;
-
-                currentPath += $"/{path}";
-
-                var art = ArticleHelper.GetArticle(currentPath, lang);
-
-                breadCrumbs.Add(new Breadcrumb
-                {
-                    Name = art is not null ? art.Metadata.Title : path.FormatToTitle(),
-                    Path = currentPath
-                });
-            }
-        }
-
-        breadCrumbs.Add(new Breadcrumb
-        {
-            Name = title,
-            Path = folderPath
-        });
-
-        logger.Add($"    Breadcrumbs: {string.Join(" -> ", breadCrumbs.Select(x => x.Name))}");
-        logger.Add($"    Parent Paths: {string.Join(" -> ", breadCrumbs.Select(x => x.Path))}");
+        var content = extractContent(md).Trim();
 
         var article = new Article
         {
-            ID = $"{folderPath}:{name}",
-            Content = content,
-            Breadcrumbs = breadCrumbs,
-            Metadata = new ArticleMetadata
-            {
-                Title = title,
-                Description = metadata.GetValueOrDefault("description", "No description provided."),
-                Image = metadata.GetValueOrDefault("image", ""),
-                Layout = metadata.GetValueOrDefault("layout", "article"),
-                Type = metadata.GetValueOrDefault("type", "article") switch
-                {
-                    "article" => ArticleType.Article,
-                    "news" => ArticleType.News,
-                    _ => ArticleType.Article,
-                },
-                Date = metadata.TryGetValue("date", out var value) ? parseDate(value) : 0
-            }
+            ID = folderPath,
+            Language = lang,
+            Content = content
         };
 
-        ArticleHelper.AddArticle(article);
+        var meta = new ArticleMetadata
+        {
+            ID = article.ID,
+            Language = article.Language,
+            Title = metadata.GetValueOrDefault("title", folderPath.Split('/', StringSplitOptions.RemoveEmptyEntries).Last().FormatToTitle()),
+            Description = metadata.GetValueOrDefault("description", "No description provided."),
+            Image = metadata.GetValueOrDefault("image", ""),
+            Layout = metadata.GetValueOrDefault("layout", "article"),
+            Type = metadata.GetValueOrDefault("type", "article") switch
+            {
+                "article" => ArticleType.Article,
+                "news" => ArticleType.News,
+                _ => ArticleType.Article,
+            },
+            Date = metadata.TryGetValue("date", out var value) ? parseDate(value) : 0
+        };
+
+        articles.Add(article);
+        articleMeta.Add(meta);
     }
 
     private long parseDate(string date)
@@ -231,6 +215,8 @@ public class DataProcessor
                 processAlbumData(file);
             else if (relative.StartsWith("/_data/tracks"))
                 processTrackData(file);
+            else if (relative.StartsWith("/_data/characters"))
+                processCharacterData(file);
             else
                 logger.Add($"Unsure how to process data file: {relative}", LogLevel.Warning);
         }
@@ -255,7 +241,7 @@ public class DataProcessor
             album.Content = "> [!NOTE]\n> TODO: Add content.";
 
         album.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
-        DiscographyHelper.AddAlbum(album);
+        albums.Add(album);
 
         logger.Add($"    Title: {album.Title} ({album.ID})");
     }
@@ -279,9 +265,33 @@ public class DataProcessor
             track.Content = "> [!NOTE]\n> TODO: Add content.";
 
         track.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
-        DiscographyHelper.AddTrack(track);
+        tracks.Add(track);
 
         logger.Add($"    Title: {track.Title} ({track.ID})");
+    }
+
+    private void processCharacterData(string file)
+    {
+        logger.Add($"Processing character {file}");
+        var json = File.ReadAllText(file);
+        var chr = json.Deserialize<Character>();
+
+        if (chr == null)
+        {
+            logger.Add($"Failed to deserialize character data from '{file}'!", LogLevel.Error);
+            return;
+        }
+
+        var md = Path.ChangeExtension(file, "md");
+        if (File.Exists(md)) chr.Content = File.ReadAllText(md);
+
+        if (string.IsNullOrWhiteSpace(chr.Content))
+            chr.Content = "> [!NOTE]\n> TODO: Add content.";
+
+        chr.ID = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
+        characters.Add(chr);
+
+        logger.Add($"    Name: {chr.Name} ({chr.ID})");
     }
 
     #endregion

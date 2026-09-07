@@ -16,7 +16,7 @@ public static class DiscordBot
 
         bot = new DiscordClient(new DiscordConfiguration
         {
-            Token = Program.Config.Token,
+            Token = Program.Config.DiscordToken,
             TokenType = TokenType.Bot,
             Intents = DiscordIntents.All,
             AutoReconnect = true,

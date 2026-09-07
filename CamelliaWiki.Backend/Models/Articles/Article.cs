@@ -1,39 +1,48 @@
-﻿using CamelliaWiki.Backend.Utils;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Midori.Searching;
-using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.Models.Articles;
 
+[Table("article")]
+[PrimaryKey(nameof(ID), nameof(Language))]
 [JsonObject(MemberSerialization.OptIn)]
 public class Article : IComparable<Article>
 {
-    [BsonId]
-    public string ID { get; init; } = "";
+    #region Stored
 
-    [BsonIgnore]
-    [JsonProperty("url")]
-    [Searchable("path")]
-    public string Path => ID.Split(':')[0];
+    [Key, Column("path"), Required, MaxLength(256)]
+    [Searchable("path"), JsonProperty("url")]
+    public string ID { get; init; } = string.Empty;
 
-    [BsonIgnore]
-    public Language Language => LanguageUtils.TryParse(LanguageCode, out var lang) ? lang : Language.en;
+    [Key, Column("lang"), Required]
+    public ArticleLanguage Language { get; init; } = ArticleLanguage.en;
 
-    [BsonIgnore]
-    [JsonProperty("lang")]
-    public string LanguageCode => ID.Split(':')[1];
+    [InverseProperty(nameof(ArticleMetadata.Article)), JsonProperty("meta")]
+    public ArticleMetadata? Metadata { get; set; }
 
-    [BsonElement("meta")]
-    [JsonProperty("meta")]
-    public ArticleMetadata Metadata { get; set; } = null!;
+    // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
+    [Column("content"), JsonProperty("content")]
+    public string Content { get; set; } = string.Empty;
 
-    [BsonElement("breadcrumbs")]
-    [JsonProperty("breadcrumbs")]
-    public List<Breadcrumb> Breadcrumbs { get; set; } = new();
+    #endregion
 
-    [BsonElement("content")]
-    [JsonProperty("content")]
-    public string Content { get; set; } = "";
+    #region Searching
+
+    [NotMapped, JsonProperty("lang")]
+    public string LanguageString => Language.ToString();
+
+    [NotMapped, Searchable("title")]
+    [Obsolete("Use Metadata.Title instead.")]
+    public string SearchableTitle => Metadata?.Title ?? "";
+
+    [NotMapped, Searchable("description")]
+    [Obsolete("Use Metadata.Description instead.")]
+    public string SearchableDescription => Metadata?.Description ?? "";
+
+    #endregion
 
     public int CompareTo(Article? other)
     {
@@ -43,20 +52,6 @@ public class Article : IComparable<Article>
         if (ReferenceEquals(null, other))
             return 1;
 
-        return Metadata.Date.CompareTo(other.Metadata.Date);
+        return Metadata?.Date?.CompareTo(other.Metadata?.Date ?? 0) ?? 0;
     }
-
-    #region Searching
-
-    [BsonIgnore]
-    [Searchable("title")]
-    [Obsolete("Use Metadata.Title instead.")]
-    public string SearchableTitle => Metadata.Title;
-
-    [BsonIgnore]
-    [Searchable("description")]
-    [Obsolete("Use Metadata.Description instead.")]
-    public string SearchableDescription => Metadata.Description;
-
-    #endregion
 }

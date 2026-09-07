@@ -1,5 +1,6 @@
-﻿using CamelliaWiki.Backend.Database.Helpers;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using CamelliaWiki.Backend.Database;
 using Newtonsoft.Json;
 
 namespace CamelliaWiki.Backend.Models.Discography;
@@ -7,54 +8,54 @@ namespace CamelliaWiki.Backend.Models.Discography;
 [JsonObject(MemberSerialization.OptIn)]
 public class DiscographyTrack : IDiscographySearchable
 {
-    [BsonId]
+    [Key, Column("id"), Required, MaxLength(256)]
     public string ID { get; set; } = string.Empty;
 
-    [BsonElement("title")]
+    [Column("title"), Required, MaxLength(256)]
     [JsonProperty("title")]
     public string Title { get; set; } = string.Empty;
 
-    [BsonElement("title_romanized")]
+    [Column("title_romanized"), MaxLength(256)]
     [JsonProperty("title_romanized")]
     public string TitleRomanized { get; set; } = string.Empty;
 
-    [BsonElement("content")]
+    [Column("content")]
     [JsonProperty("content")]
     public string Content { get; set; } = string.Empty;
 
-    [BsonElement("length")]
+    [Column("length"), MaxLength(16)]
     [JsonProperty("length")]
     public string Length { get; set; } = string.Empty;
 
-    [BsonElement("bpm")]
+    [Column("bpm"), MaxLength(32)]
     [JsonProperty("bpm")]
     public string BPM { get; set; } = string.Empty;
 
-    [BsonElement("single")]
+    [Column("single")]
     [JsonProperty("single")]
     public bool Single { get; set; }
 
-    [BsonElement("release")]
+    [Column("release")]
     [JsonProperty("release")]
     public DiscographyRelease Release { get; set; } = null!;
 
-    [BsonElement("albums")]
+    [Column("albums")]
     [JsonProperty("albums")]
-    public string[] Albums { get; set; } = Array.Empty<string>();
+    public ICollection<string> Albums { get; set; } = [];
 
-    [BsonElement("covers")]
+    [Column("covers")]
     [JsonProperty("covers")]
-    public DiscographyCover[] Covers { get; set; } = Array.Empty<DiscographyCover>();
+    public ICollection<DiscographyCover> Covers { get; set; } = [];
 
-    [BsonElement("credits")]
+    [Column("credits")]
     [JsonProperty("credits")]
-    public DiscographyCredit[] Credits { get; set; } = Array.Empty<DiscographyCredit>();
+    public ICollection<DiscographyCredit> Credits { get; set; } = [];
 
-    [BsonElement("links")]
+    [Column("links")]
     [JsonProperty("links")]
-    public DiscographyLink[] Links { get; set; } = Array.Empty<DiscographyLink>();
+    public ICollection<DiscographyLink> Links { get; set; } = [];
 
-    public object ToAPI() => new
+    public object ToAPI(DatabaseContext database) => new
     {
         id = ID,
         title = Title,
@@ -65,7 +66,7 @@ public class DiscographyTrack : IDiscographySearchable
         release = Release,
         albums = Albums.Select<string, object>(x =>
         {
-            var album = DiscographyHelper.GetAlbum(x);
+            var album = database.Albums.Find(x);
 
             if (album is not null)
             {

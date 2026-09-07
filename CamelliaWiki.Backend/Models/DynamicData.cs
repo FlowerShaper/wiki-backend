@@ -1,13 +1,15 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CamelliaWiki.Backend.Models;
 
+[Table("dynamic")]
 public class DynamicData
 {
-    [BsonId]
-    public DynamicDataType Key { get; set; } = 0;
+    [Key, Column("key"), Required]
+    public DynamicDataType Key { get; init; } = 0;
 
-    [BsonElement("value")]
+    [Column("value"), Required, MaxLength(512)]
     public string Value { get; set; } = "";
 
     public DynamicData(DynamicDataType key, string value)
@@ -16,9 +18,7 @@ public class DynamicData
         Value = value;
     }
 
-    [BsonConstructor]
-    [Obsolete("Used for BSON only.")]
-    public DynamicData()
+    private DynamicData()
     {
     }
 }
