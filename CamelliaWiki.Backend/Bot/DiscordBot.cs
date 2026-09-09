@@ -18,7 +18,7 @@ public static class DiscordBot
         {
             Token = Program.Config.DiscordToken,
             TokenType = TokenType.Bot,
-            Intents = DiscordIntents.All,
+            Intents = DiscordIntents.None,
             AutoReconnect = true,
             MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.None
         });
